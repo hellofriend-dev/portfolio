@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ru" class="no-js">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Портфолио — сайты и Telegram-боты</title>
+<meta name="description" content="Демо-проекты: лендинг под ключ, сайт-визитка и презентация Telegram-бота. Чистый HTML, CSS и JavaScript.">
+
+<!-- ЗАМЕНИТЬ ПЕРЕД ПУБЛИКАЦИЕЙ: https://t.me/username → твой ник в Telegram -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.replace('no-js','js');</script>
+<style>
+:root{
+  --bg:#0A0A0A; --surface:#111111; --surface-2:#1A1A1A;
+  --accent:#6C63FF; --accent-hover:#5A52E0;
+  --text:#F5F5F5; --text-muted:#888888;
+  --border:rgba(255,255,255,0.08); --border-strong:rgba(255,255,255,0.16);
+  --radius:12px; --radius-sm:8px;
+  --fs-mono:12px; --fs-sm:14px; --fs-lg:18px; --fs-xl:22px;
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;min-height:100vh;
+  background:var(--bg);color:var(--text);
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
+  font-size:16px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  font-feature-settings:"cv05","ss01";
+  display:flex;flex-direction:column;
+  overflow-x:hidden;
+}
+h1,h2,h3,p{margin:0}
+a{color:inherit;text-decoration:none}
+::selection{background:var(--accent);color:#fff}
+
+.container{width:100%;max-width:1080px;margin-inline:auto;padding-inline:24px}
+
+.hero{position:relative;padding-block:120px 72px;overflow:hidden}
+.hero__bg{position:absolute;inset:0;pointer-events:none}
+.hero__glow{
+  position:absolute;top:-200px;left:50%;transform:translateX(-50%);
+  width:720px;height:520px;background:var(--accent);
+  opacity:.10;filter:blur(150px);border-radius:50%;
+}
+.hero__grid{
+  position:absolute;inset:0;
+  background-image:radial-gradient(circle at 1px 1px, rgba(255,255,255,.10) 1px, transparent 0);
+  background-size:34px 34px;
+  -webkit-mask-image:radial-gradient(ellipse 60% 60% at 50% 20%, #000 0%, transparent 74%);
+  mask-image:radial-gradient(ellipse 60% 60% at 50% 20%, #000 0%, transparent 74%);
+}
+.hero__inner{position:relative;z-index:1}
+
+.badge{
+  display:inline-flex;align-items:center;gap:10px;height:32px;
+  padding:0 14px 0 12px;margin-bottom:30px;
+  border:1px solid var(--border);border-radius:100px;background:var(--surface);
+  font-size:var(--fs-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);
+}
+.dot{
+  width:6px;height:6px;border-radius:50%;background:#4ade80;flex:none;
+  box-shadow:0 0 0 0 rgba(74,222,128,.6);animation:pulse 2.4s infinite;
+}
+@keyframes pulse{
+  70%{box-shadow:0 0 0 8px rgba(74,222,128,0)}
+  100%{box-shadow:0 0 0 0 rgba(74,222,128,0)}
+}
+h1{
+  font-size:clamp(40px,6.4vw,72px);
+  line-height:1.03;letter-spacing:-0.04em;font-weight:600;
+  text-wrap:balance;max-width:15ch;
+}
+.lead{
+  margin-top:22px;font-size:var(--fs-lg);color:var(--text-muted);
+  line-height:1.65;max-width:52ch;text-wrap:pretty;
+}
+.meta{
+  display:flex;flex-wrap:wrap;gap:10px 32px;
+  margin-top:40px;padding-top:24px;border-top:1px solid var(--border);
+  font-size:var(--fs-sm);color:var(--text-muted);
+}
+.meta span{display:inline-flex;align-items:center;gap:9px}
+.meta span::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--accent);flex:none}
+
+.works{padding-bottom:96px}
+.eyebrow{
+  display:flex;align-items:center;gap:12px;margin-bottom:28px;
+  font-size:var(--fs-mono);font-weight:500;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--text-muted);
+}
+.eyebrow::before{content:"";width:24px;height:1px;background:var(--accent)}
+
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.card{
+  position:relative;display:flex;flex-direction:column;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:28px 26px 26px;
+  transition:border-color .25s var(--ease),background .25s var(--ease),transform .25s var(--ease);
+}
+.card:hover{border-color:var(--border-strong);background:var(--surface-2);transform:translateY(-3px)}
+.card__num{font-size:var(--fs-mono);letter-spacing:.1em;color:var(--accent);font-weight:600;margin-bottom:18px}
+.card h3{font-size:var(--fs-xl);font-weight:600;letter-spacing:-0.02em;line-height:1.25}
+.card p{margin-top:10px;color:var(--text-muted);font-size:var(--fs-sm);line-height:1.65;text-wrap:pretty}
+.card__go{
+  display:inline-flex;align-items:center;gap:8px;
+  margin-top:24px;padding-top:20px;border-top:1px solid var(--border);
+  font-size:var(--fs-sm);font-weight:600;color:var(--text);
+}
+.card__go .arr{transition:transform .25s var(--ease)}
+.card:hover .card__go .arr{transform:translateX(4px)}
+.card__stack{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
+.chip{
+  padding:3px 10px;border:1px solid var(--border);border-radius:100px;
+  font-size:var(--fs-mono);color:var(--text-muted);
+}
+
+.footer{
+  margin-top:auto;border-top:1px solid var(--border);
+  padding-block:28px 36px;
+  display:flex;flex-wrap:wrap;gap:12px 24px;
+  justify-content:space-between;align-items:center;
+  font-size:var(--fs-mono);color:var(--text-muted);letter-spacing:.03em;
+}
+.footer a{color:var(--text-muted);transition:color .2s var(--ease)}
+.footer a:hover{color:var(--text)}
+.footer__links{display:flex;gap:20px}
+
+.js [data-reveal]{
+  opacity:0;transform:translateY(18px);
+  transition:opacity .7s var(--ease),transform .7s var(--ease);
+  transition-delay:var(--d,0ms);
+}
+.js [data-reveal].is-visible{opacity:1;transform:none}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+  .js [data-reveal]{opacity:1;transform:none}
+}
+
+@media (max-width:900px){
+  .grid{grid-template-columns:1fr 1fr}
+  .grid > :last-child{grid-column:1/-1}
+}
+@media (max-width:620px){
+  .container{padding-inline:20px}
+  .hero{padding-block:80px 56px}
+  .works{padding-bottom:72px}
+  .grid{grid-template-columns:1fr}
+  .grid > :last-child{grid-column:auto}
+  .meta{flex-direction:column;gap:10px}
+}
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero__bg" aria-hidden="true">
+    <div class="hero__glow"></div>
+    <div class="hero__grid"></div>
+  </div>
+  <div class="container hero__inner">
+    <div class="badge" data-reveal><span class="dot"></span>Открыт для заказов</div>
+    <h1 data-reveal style="--d:60ms">Сайты и Telegram-боты под ключ</h1>
+    <p class="lead" data-reveal style="--d:130ms">
+      Три демо-проекта, собранных на чистом HTML, CSS и JavaScript.
+      Открываются мгновенно, работают на любом экране, ноль зависимостей.
+    </p>
+    <div class="meta" data-reveal style="--d:200ms">
+      <span>Лендинги от 8 000 ₽</span>
+      <span>Боты от 15 000 ₽</span>
+      <span>Веб-панели от 20 000 ₽</span>
+    </div>
+  </div>
+</section>
+
+<section class="works">
+  <div class="container">
+    <div class="eyebrow" data-reveal>Демо-проекты</div>
+    <div class="grid">
+
+      <a class="card" href="landing/index.html" data-reveal>
+        <div class="card__num">01</div>
+        <h3>Лендинг агентства</h3>
+        <p>Одностраничник под ключ: герой, услуги с ценами, процесс работы в четыре шага, портфолио и блок заявки.</p>
+        <div class="card__stack">
+          <span class="chip">HTML</span><span class="chip">CSS</span><span class="chip">JS</span>
+        </div>
+        <span class="card__go">Открыть демо <span class="arr">→</span></span>
+      </a>
+
+      <a class="card" href="vizitka/index.html" data-reveal style="--d:80ms">
+        <div class="card__num">02</div>
+        <h3>Сайт-визитка</h3>
+        <p>Персональная страница разработчика: карточка-спецификация, навыки по группам и проекты списком с подсветкой.</p>
+        <div class="card__stack">
+          <span class="chip">HTML</span><span class="chip">CSS</span><span class="chip">JS</span>
+        </div>
+        <span class="card__go">Открыть демо <span class="arr">→</span></span>
+      </a>
+
+      <a class="card" href="bot-demo/index.html" data-reveal style="--d:160ms">
+        <div class="card__num">03</div>
+        <h3>Демо Telegram-бота</h3>
+        <p>Презентация бота учёта инструмента: живой мок-чат с печатающимися сообщениями, команды и возможности.</p>
+        <div class="card__stack">
+          <span class="chip">HTML</span><span class="chip">CSS</span><span class="chip">JS</span>
+        </div>
+        <span class="card__go">Открыть демо <span class="arr">→</span></span>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<div class="container">
+  <footer class="footer">
+    <span>© 2026 — демо-проекты для портфолио</span>
+    <div class="footer__links">
+      <a href="https://t.me/username" target="_blank" rel="noopener">Telegram</a>
+      <a href="https://github.com/apex4296-ai" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </footer>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var targets = document.querySelectorAll('[data-reveal]');
+  if (!('IntersectionObserver' in window)) {
+    targets.forEach(function (el) { el.classList.add('is-visible'); });
+    return;
+  }
+  var observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('is-visible');
+      observer.unobserve(entry.target);
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+  targets.forEach(function (el) { observer.observe(el); });
+})();
+</script>
+
+</body>
+</html>
