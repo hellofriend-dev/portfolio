@@ -27,7 +27,7 @@
 ## Контакты
 
 - Telegram: [@username](https://t.me/username)
-- GitHub: [apex4296-ai](https://github.com/apex4296-ai)
+- GitHub: [hellofriend-dev](https://github.com/hellofriend-dev)
 
 ---
 
