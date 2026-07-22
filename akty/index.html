@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Заявки и акты для выездных бригад — демо</title>
+<meta name="description" content="Демонстрация системы для монтажных бригад: план на день, отчёт с объекта, фотофиксация, подпись и журнал руководителя.">
+<style>
+/* ============================================================
+   Токены взяты из самой системы («инженерный синий»),
+   поэтому демонстрация выглядит так же, как рабочее приложение.
+   ============================================================ */
+:root{
+  --bg:#eef1f6; --surface:#ffffff; --ink:#182130; --muted:#5c6b80;
+  --line:#d9e0ea; --acc:#2553aa; --acc-press:#1e4489; --acc-ink:#ffffff;
+  --soft:#e6ecf6; --danger:#b3341e;
+  --r:10px; --r-sm:7px;
+
+  --ok-ink:#13703f;   --ok-bg:#e0f2e8;
+  --warn-ink:#8a5a06; --warn-bg:#faeed2;
+  --info-ink:#2553aa; --info-bg:#e2eafa;
+  --done-ink:#4c5a86; --done-bg:#e7eaf5;
+
+  --t-text:#2553aa;  --t-text-bg:#e6ecf6;
+  --t-photo:#1f7a4d; --t-photo-bg:#e2f2e8;
+  --t-file:#6b4fbb;  --t-file-bg:#ece7f9;
+  --t-audio:#c73a2b; --t-audio-bg:#fbe4df;
+
+  --shadow:0 1px 3px rgba(24,33,48,.08);
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#141a21; --surface:#1e2630; --ink:#e7edf5; --muted:#8c99a9;
+    --line:#2c3745; --acc:#4d7fd6; --acc-press:#3a6bc2; --soft:#22303a;
+    --danger:#e06a55;
+    --ok-ink:#63d9a4; --ok-bg:#1c3529;
+    --warn-ink:#e9b45c; --warn-bg:#3a2f1a;
+    --info-ink:#7fb4e8; --info-bg:#1f3040;
+    --done-ink:#a4b0d8; --done-bg:#262e42;
+    --t-text-bg:#22303a; --t-photo-bg:#1c3529; --t-file-bg:#2a2440; --t-audio-bg:#3a221d;
+  }
+}
+
+*,*::before,*::after{box-sizing:border-box}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4,p{margin:0}
+button{font:inherit;cursor:pointer}
+a{color:inherit}
+
+/* ---------- Полоса демо ---------- */
+.demobar{
+  background:var(--ink);color:var(--bg);
+  padding:8px 16px;text-align:center;
+  font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;
+}
+.demobar a,.demobar button{
+  color:inherit;text-decoration:underline;text-underline-offset:3px;
+  background:none;border:none;padding:0;font:inherit;
+}
+
+.wrap{max-width:1180px;margin-inline:auto;padding:24px 20px 64px}
+
+.head{margin-bottom:22px}
+.head h1{font-size:clamp(22px,3.2vw,30px);letter-spacing:-.02em;line-height:1.2}
+.head p{margin-top:8px;color:var(--muted);max-width:62ch}
+
+/* ---------- Переключатель интерфейсов ---------- */
+.tabs{
+  display:inline-flex;gap:4px;padding:4px;margin:18px 0 22px;
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+}
+.tabs button{
+  border:none;background:none;color:var(--muted);
+  padding:9px 18px;border-radius:var(--r-sm);font-size:14px;font-weight:600;
+  transition:background .15s,color .15s;
+}
+.tabs button[aria-selected="true"]{background:var(--acc);color:var(--acc-ink)}
+
+.view[hidden]{display:none}
+
+/* ---------- Телефон ---------- */
+.phone-stage{display:grid;grid-template-columns:360px minmax(0,1fr);gap:32px;align-items:start}
+.phone{
+  border:1px solid var(--line);border-radius:26px;background:var(--surface);
+  padding:10px;box-shadow:0 20px 50px -28px rgba(24,33,48,.5);
+}
+.screen{
+  border:1px solid var(--line);border-radius:18px;background:var(--bg);
+  height:640px;display:flex;flex-direction:column;overflow:hidden;
+}
+.appbar{
+  flex:none;padding:14px 16px;background:var(--surface);
+  border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:10px;
+}
+.appbar .who{font-size:13px;font-weight:600}
+.appbar .sub{font-size:11px;color:var(--muted)}
+.appbar .back{
+  border:1px solid var(--line);background:var(--surface);color:var(--ink);
+  border-radius:var(--r-sm);padding:5px 10px;font-size:12px;
+}
+.scroll{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+.scroll::-webkit-scrollbar{width:4px}
+.scroll::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px}
+
+.daynote{font-size:12px;color:var(--muted);padding:0 2px 2px}
+
+.tk{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+  padding:12px;box-shadow:var(--shadow);
+  transition:border-color .15s,transform .15s;
+}
+.tk:hover{border-color:var(--acc)}
+.tk__top{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.tk__num{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+.tk__title{font-size:14px;font-weight:600;line-height:1.3}
+.tk__addr{margin-top:4px;font-size:12px;color:var(--muted)}
+.tk__row{display:flex;align-items:center;gap:8px;margin-top:10px}
+
+.chip{
+  font-size:11px;font-weight:700;padding:3px 8px;border-radius:100px;
+  letter-spacing:.02em;white-space:nowrap;
+}
+.chip--new{background:var(--info-bg);color:var(--info-ink)}
+.chip--work{background:var(--warn-bg);color:var(--warn-ink)}
+.chip--done{background:var(--done-bg);color:var(--done-ink)}
+.chip--signed{background:var(--ok-bg);color:var(--ok-ink)}
+
+.btn{
+  border:1px solid var(--acc);background:var(--acc);color:var(--acc-ink);
+  border-radius:var(--r-sm);padding:9px 14px;font-size:13px;font-weight:600;
+  transition:background .15s;
+}
+.btn:hover{background:var(--acc-press)}
+.btn--ghost{background:transparent;color:var(--acc);border-color:var(--line)}
+.btn--ghost:hover{background:var(--soft)}
+.btn--wide{width:100%}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn--sm{padding:6px 11px;font-size:12px}
+
+.ord{display:flex;gap:3px;margin-left:auto}
+.ord button{
+  border:1px solid var(--line);background:var(--surface);color:var(--muted);
+  border-radius:6px;width:26px;height:26px;line-height:1;font-size:13px;
+}
+.ord button:hover:not([disabled]){border-color:var(--acc);color:var(--acc)}
+.ord button[disabled]{opacity:.3;cursor:not-allowed}
+
+/* Блоки задания */
+.stack{display:flex;flex-direction:column;gap:7px;margin-top:10px}
+.blk{
+  display:flex;gap:9px;align-items:flex-start;
+  padding:9px 11px;border-radius:var(--r-sm);font-size:13px;line-height:1.45;
+}
+.blk__t{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;flex:none;padding-top:2px}
+.blk--text{background:var(--t-text-bg)}   .blk--text .blk__t{color:var(--t-text)}
+.blk--photo{background:var(--t-photo-bg)} .blk--photo .blk__t{color:var(--t-photo)}
+.blk--file{background:var(--t-file-bg)}   .blk--file .blk__t{color:var(--t-file)}
+.blk--audio{background:var(--t-audio-bg)} .blk--audio .blk__t{color:var(--t-audio)}
+
+.card{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+  padding:13px;box-shadow:var(--shadow);
+}
+.card h4{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:9px}
+
+.ta{
+  width:100%;min-height:96px;resize:vertical;
+  border:1px solid var(--line);border-radius:var(--r-sm);background:var(--bg);
+  color:var(--ink);padding:10px;font:inherit;font-size:13px;line-height:1.5;
+}
+.ta:focus{outline:2px solid var(--acc);outline-offset:-1px}
+
+.mic{
+  display:flex;align-items:center;gap:8px;margin-top:9px;
+  border:1px solid var(--line);background:var(--surface);color:var(--ink);
+  border-radius:var(--r-sm);padding:9px 12px;font-size:13px;font-weight:600;width:100%;
+}
+.mic:hover{border-color:var(--acc);color:var(--acc)}
+.mic.is-rec{border-color:var(--danger);color:var(--danger)}
+.mic .dot{width:9px;height:9px;border-radius:50%;background:var(--danger);flex:none}
+.mic.is-rec .dot{animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.25}}
+
+.shots{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px}
+.shot{
+  width:60px;height:60px;border-radius:var(--r-sm);flex:none;
+  border:1px solid var(--line);
+  background:linear-gradient(135deg,var(--soft),var(--line));
+  display:grid;place-items:center;font-size:10px;color:var(--muted);text-align:center;padding:4px;
+}
+.shot--add{border-style:dashed;cursor:pointer;color:var(--acc);font-size:18px}
+.shot--add:hover{border-color:var(--acc)}
+
+.sign{
+  margin-top:10px;padding:11px;border-radius:var(--r-sm);
+  background:var(--ok-bg);color:var(--ok-ink);font-size:12px;line-height:1.5;
+}
+.locked{
+  margin-top:9px;padding:9px 11px;border-radius:var(--r-sm);
+  background:var(--soft);color:var(--muted);font-size:12px;line-height:1.45;
+}
+
+.times{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:9px;font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+
+/* ---------- Пояснения рядом ---------- */
+.notes{display:flex;flex-direction:column;gap:14px;position:sticky;top:20px}
+.note{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+  padding:16px 18px;box-shadow:var(--shadow);
+}
+.note h3{font-size:14px;font-weight:700;letter-spacing:-.01em}
+.note p{margin-top:7px;color:var(--muted);font-size:13px;line-height:1.6}
+.note ul{margin:9px 0 0;padding:0;list-style:none;display:grid;gap:7px}
+.note li{display:flex;gap:9px;font-size:13px;color:var(--muted);line-height:1.5}
+.note li::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--acc);flex:none;margin-top:7px}
+.step-now{
+  display:inline-flex;align-items:center;gap:8px;margin-top:12px;padding:7px 11px;
+  border-radius:100px;background:var(--info-bg);color:var(--info-ink);
+  font-size:12px;font-weight:700;
+}
+
+/* ---------- Журнал руководителя ---------- */
+.tablewrap{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+  overflow-x:auto;box-shadow:var(--shadow);
+}
+table{border-collapse:collapse;width:100%;min-width:720px}
+th,td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line);font-size:13px;vertical-align:top}
+th{
+  font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
+  font-weight:700;background:var(--soft);position:sticky;top:0;
+}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--soft)}
+td .nm{font-weight:600}
+td .ad{color:var(--muted);font-size:12px;margin-top:3px}
+.num{font-variant-numeric:tabular-nums;color:var(--muted)}
+
+.sum{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.sum__i{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+  padding:14px 16px;box-shadow:var(--shadow);
+}
+.sum__i b{display:block;font-size:24px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.sum__i span{display:block;margin-top:3px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+
+.subhead{margin:26px 0 12px;font-size:15px;font-weight:700}
+
+@media (max-width:980px){
+  .phone-stage{grid-template-columns:1fr;gap:24px}
+  .phone{max-width:380px;margin-inline:auto;width:100%}
+  .notes{position:static}
+  .sum{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="demobar">
+  <a href="../">← портфолио</a> · демо-версия · данные вымышленные ·
+  <button type="button" id="reset">сбросить</button>
+</div>
+
+<div class="wrap">
+
+  <div class="head">
+    <h1>Заявки и акты для выездных бригад</h1>
+    <p>
+      Демонстрация рабочего сценария: бригада получает план на день, отмечает начало
+      и окончание работ, диктует отчёт прямо на объекте и подписывает акт.
+      Руководитель видит всё в журнале. Здесь можно нажимать — состояния меняются
+      по-настоящему, как в системе.
+    </p>
+  </div>
+
+  <div class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-view="phone">Телефон исполнителя</button>
+    <button role="tab" aria-selected="false" data-view="desk">Компьютер руководителя</button>
+  </div>
+
+  <!-- ================= ТЕЛЕФОН ================= -->
+  <section class="view" id="view-phone">
+    <div class="phone-stage">
+      <div class="phone">
+        <div class="screen">
+          <div class="appbar" id="appbar"></div>
+          <div class="scroll" id="screen"></div>
+        </div>
+      </div>
+
+      <div class="notes">
+        <div class="note">
+          <h3>Что здесь происходит</h3>
+          <p id="hint">
+            Список — это план на день. Порядок бригада меняет стрелками, начатые заявки
+            встают по фактическому времени старта.
+          </p>
+          <div class="step-now" id="stepNow">Шаг 1 из 4 — открыть заявку</div>
+        </div>
+
+        <div class="note">
+          <h3>Почему так сделано</h3>
+          <ul>
+            <li>Время начала и окончания фиксируется по нажатию кнопки, а не со слов — из этого потом считается табель</li>
+            <li>Отчёт диктуется голосом: на объекте печатать неудобно, особенно в перчатках</li>
+            <li>До подписи отчёт правится сколько угодно, после — сервер отклоняет любые изменения</li>
+            <li>Приложение ставится по ссылке-приглашению, без установки из магазина</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= РУКОВОДИТЕЛЬ ================= -->
+  <section class="view" id="view-desk" hidden>
+    <div class="sum" id="sum"></div>
+
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr>
+            <th>№</th><th>Заявка</th><th>Исполнитель</th>
+            <th>Статус</th><th>Начало</th><th>Окончание</th><th>Часы</th>
+          </tr>
+        </thead>
+        <tbody id="journal"></tbody>
+      </table>
+    </div>
+
+    <div class="subhead">Табель за сегодня</div>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th>Сотрудник</th><th>Заявок закрыто</th><th>В работе</th><th>Отработано</th></tr>
+        </thead>
+        <tbody id="timesheet"></tbody>
+      </table>
+    </div>
+
+    <div class="note" style="margin-top:18px">
+      <h3>Что ещё есть в системе</h3>
+      <ul>
+        <li>Каждая компания изолирована: свои сотрудники, заявки и настройки в одной установке</li>
+        <li>Роли: администратор, руководитель, исполнитель</li>
+        <li>Акт формируется в Word и печатается прямо из журнала</li>
+        <li>Распознавание речи — Yandex SpeechKit или Whisper, на выбор</li>
+        <li>Сжатие фотографий настраивается с проверкой на своём снимке</li>
+        <li>Часовой пояс задаётся для компании, а не берётся с телефона</li>
+      </ul>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ---------- Данные ----------
+  var WORKER = 'Иванов А. П.';
+
+  function seed() {
+    return [
+      {
+        id: 1, num: '№ 1042', title: 'Замена циркуляционного насоса',
+        addr: 'ул. Северная, 14 · котельная', worker: WORKER, status: 'new',
+        start: null, end: null, report: '', photos: 0, signed: null,
+        stack: [
+          { t: 'text',  v: 'Заменить насос Grundfos на подающей линии. Старый шумит и греется.' },
+          { t: 'photo', v: 'Фото узла до замены — 2 шт.' },
+          { t: 'file',  v: 'Паспорт оборудования.pdf' }
+        ]
+      },
+      {
+        id: 2, num: '№ 1043', title: 'Опрессовка системы отопления',
+        addr: 'пр. Заречный, 8 · подвал', worker: WORKER, status: 'new',
+        start: null, end: null, report: '', photos: 0, signed: null,
+        stack: [
+          { t: 'text',  v: 'Опрессовать контур первого подъезда, давление 6 бар, выдержка 30 минут.' },
+          { t: 'audio', v: 'Голосовая заметка диспетчера — 0:24' }
+        ]
+      },
+      {
+        id: 3, num: '№ 1039', title: 'Монтаж узла учёта тепла',
+        addr: 'ул. Строителей, 3 · ИТП', worker: WORKER, status: 'signed',
+        start: '08:10', end: '11:35', photos: 4,
+        report: 'Узел смонтирован, пломбы установлены. Показания на момент сдачи: 0,00 Гкал. Замечаний нет.',
+        signed: 'Иванов А. П., 11:40',
+        stack: [ { t: 'text', v: 'Смонтировать узел учёта по проекту, опломбировать.' } ]
+      }
+    ];
+  }
+
+  var tickets = seed();
+  var openId = null;
+
+  var STATUS = {
+    new:    { label: 'Новая',     cls: 'chip--new' },
+    work:   { label: 'В работе',  cls: 'chip--work' },
+    done:   { label: 'Завершена', cls: 'chip--done' },
+    signed: { label: 'Подписана', cls: 'chip--signed' }
+  };
+
+  var TYPE = { text: 'текст', photo: 'фото', file: 'файл', audio: 'аудио' };
+
+  var $ = function (id) { return document.getElementById(id); };
+  var esc = function (s) {
+    return String(s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  };
+
+  function nowHM() {
+    var d = new Date();
+    return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+  }
+
+  function hours(a, b) {
+    if (!a || !b) return '—';
+    var toMin = function (t) { var p = t.split(':'); return +p[0] * 60 + +p[1]; };
+    var m = toMin(b) - toMin(a);
+    if (m < 0) m += 24 * 60;
+    // В демо заявку закрывают за секунды. «0 ч 00 мин» читается как сбой,
+    // поэтому короткие интервалы подписываем словами.
+    if (m === 0) return 'менее минуты';
+    return (Math.floor(m / 60) + ' ч ' + String(m % 60).padStart(2, '0') + ' мин');
+  }
+
+  // ---------- Экран: список ----------
+  function renderList() {
+    $('appbar').innerHTML =
+      '<div><div class="who">' + esc(WORKER) + '</div>' +
+      '<div class="sub">План на сегодня · ' + tickets.filter(function (t) { return t.status !== 'signed'; }).length + ' в работе</div></div>';
+
+    var order = tickets.slice().sort(function (a, b) {
+      var rank = { work: 0, new: 1, done: 2, signed: 3 };
+      return rank[a.status] - rank[b.status];
+    });
+
+    var html = '<div class="daynote">Порядок можно менять стрелками — начатые заявки поднимаются наверх сами.</div>';
+
+    order.forEach(function (t, i) {
+      var s = STATUS[t.status];
+      html +=
+        '<div class="tk">' +
+          '<div class="tk__top">' +
+            '<span class="tk__num">' + esc(t.num) + '</span>' +
+            '<span class="chip ' + s.cls + '">' + s.label + '</span>' +
+            '<span class="ord">' +
+              '<button data-move="up" data-id="' + t.id + '"' + (i === 0 ? ' disabled' : '') + '>↑</button>' +
+              '<button data-move="down" data-id="' + t.id + '"' + (i === order.length - 1 ? ' disabled' : '') + '>↓</button>' +
+            '</span>' +
+          '</div>' +
+          '<div class="tk__title">' + esc(t.title) + '</div>' +
+          '<div class="tk__addr">' + esc(t.addr) + '</div>' +
+          (t.start ? '<div class="times"><span>Начало ' + t.start + '</span>' +
+            (t.end ? '<span>Окончание ' + t.end + '</span><span>' + hours(t.start, t.end) + '</span>' : '') + '</div>' : '') +
+          '<div class="tk__row">' +
+            '<button class="btn btn--sm btn--ghost" data-open="' + t.id + '">Открыть</button>' +
+            (t.status === 'new'  ? '<button class="btn btn--sm" data-start="' + t.id + '">Начать</button>' : '') +
+            (t.status === 'work' ? '<button class="btn btn--sm" data-finish="' + t.id + '">Завершить</button>' : '') +
+          '</div>' +
+        '</div>';
+    });
+
+    $('screen').innerHTML = html;
+  }
+
+  // ---------- Экран: карточка ----------
+  function renderCard(t) {
+    var s = STATUS[t.status];
+    var locked = t.status === 'signed';
+
+    $('appbar').innerHTML =
+      '<button class="back" data-back="1">‹ Назад</button>' +
+      '<div><div class="who">' + esc(t.num) + '</div><div class="sub">' + esc(t.addr) + '</div></div>';
+
+    var stack = t.stack.map(function (b) {
+      return '<div class="blk blk--' + b.t + '"><span class="blk__t">' + TYPE[b.t] + '</span><span>' + esc(b.v) + '</span></div>';
+    }).join('');
+
+    var shots = '';
+    for (var i = 0; i < t.photos; i++) shots += '<div class="shot">фото ' + (i + 1) + '</div>';
+    if (!locked) shots += '<button class="shot shot--add" data-photo="' + t.id + '" title="Добавить фото">+</button>';
+
+    $('screen').innerHTML =
+      '<div class="card">' +
+        '<div class="tk__top" style="margin-bottom:6px">' +
+          '<span class="chip ' + s.cls + '">' + s.label + '</span>' +
+        '</div>' +
+        '<div class="tk__title">' + esc(t.title) + '</div>' +
+        (t.start ? '<div class="times"><span>Начало ' + t.start + '</span>' +
+          (t.end ? '<span>Окончание ' + t.end + '</span><span>' + hours(t.start, t.end) + '</span>' : '') + '</div>' : '') +
+      '</div>' +
+
+      '<div class="card"><h4>Задание</h4><div class="stack">' + stack + '</div></div>' +
+
+      '<div class="card">' +
+        '<h4>Отчёт с объекта</h4>' +
+        '<textarea class="ta" id="report" ' + (locked ? 'readonly' : '') +
+          ' placeholder="Опишите, что сделано…">' + esc(t.report) + '</textarea>' +
+        (locked ? '' :
+          '<button class="mic" id="mic" data-id="' + t.id + '"><span class="dot"></span>Записать голосом</button>') +
+        '<h4 style="margin-top:14px">Фотофиксация</h4>' +
+        '<div class="shots">' + shots + '</div>' +
+        (locked
+          ? '<div class="sign">Подписано: ' + esc(t.signed) + '<br>Документ закрыт для изменений.</div>'
+          : '') +
+      '</div>' +
+
+      (locked ? '' :
+        '<div class="card">' +
+          (t.status === 'new'
+            ? '<button class="btn btn--wide" data-start="' + t.id + '">Начать работу</button>'
+            : t.status === 'work'
+              ? '<button class="btn btn--wide" data-finish="' + t.id + '">Завершить работу</button>'
+              : '<button class="btn btn--wide" data-sign="' + t.id + '"' +
+                  (t.report.trim() ? '' : ' disabled') + '>Подписать акт</button>') +
+          (t.status === 'done' && !t.report.trim()
+            ? '<div class="locked">Чтобы подписать, заполните отчёт — можно голосом.</div>'
+            : t.status === 'done'
+              ? '<div class="locked">После подписи изменить отчёт будет нельзя.</div>'
+              : '') +
+        '</div>');
+
+    var ta = $('report');
+    if (ta && !locked) {
+      ta.addEventListener('input', function () { t.report = ta.value; });
+      ta.addEventListener('blur', function () { render(); });
+    }
+  }
+
+  // ---------- Подсказка сбоку ----------
+  function updateHint() {
+    var t = openId ? byId(openId) : null;
+    var hint = $('hint'), step = $('stepNow');
+    if (!t) {
+      hint.textContent = 'Список — это план на день. Порядок бригада меняет стрелками, начатые заявки встают по фактическому времени старта.';
+      step.textContent = 'Шаг 1 из 4 — открыть заявку';
+    } else if (t.status === 'new') {
+      hint.textContent = 'Видно задание: текст, фотографии, файлы и голосовые заметки диспетчера идут одним стеком, в любом порядке.';
+      step.textContent = 'Шаг 2 из 4 — нажать «Начать работу»';
+    } else if (t.status === 'work') {
+      hint.textContent = 'Время старта записано. Теперь можно диктовать отчёт и прикладывать фотографии прямо с объекта.';
+      step.textContent = 'Шаг 3 из 4 — заполнить отчёт и завершить';
+    } else if (t.status === 'done') {
+      hint.textContent = 'Работа завершена, время зафиксировано. Отчёт ещё можно править — до подписи он остаётся черновиком.';
+      step.textContent = 'Шаг 4 из 4 — подписать акт';
+    } else {
+      hint.textContent = 'Акт подписан. Дальше он доступен только для чтения и печати — сервер отклонит любую правку.';
+      step.textContent = 'Готово — заявка закрыта';
+    }
+  }
+
+  // ---------- Журнал ----------
+  function renderDesk() {
+    var closed = tickets.filter(function (t) { return t.status === 'signed'; }).length;
+    var work = tickets.filter(function (t) { return t.status === 'work'; }).length;
+    var fresh = tickets.filter(function (t) { return t.status === 'new'; }).length;
+    var done = tickets.filter(function (t) { return t.status === 'done'; }).length;
+
+    $('sum').innerHTML =
+      '<div class="sum__i"><b>' + tickets.length + '</b><span>заявок на день</span></div>' +
+      '<div class="sum__i"><b>' + work + '</b><span>в работе</span></div>' +
+      '<div class="sum__i"><b>' + done + '</b><span>ждут подписи</span></div>' +
+      '<div class="sum__i"><b>' + closed + '</b><span>подписано</span></div>';
+
+    $('journal').innerHTML = tickets.map(function (t) {
+      var s = STATUS[t.status];
+      return '<tr>' +
+        '<td class="num">' + esc(t.num) + '</td>' +
+        '<td><div class="nm">' + esc(t.title) + '</div><div class="ad">' + esc(t.addr) + '</div></td>' +
+        '<td>' + esc(t.worker) + '</td>' +
+        '<td><span class="chip ' + s.cls + '">' + s.label + '</span></td>' +
+        '<td class="num">' + (t.start || '—') + '</td>' +
+        '<td class="num">' + (t.end || '—') + '</td>' +
+        '<td class="num">' + hours(t.start, t.end) + '</td>' +
+      '</tr>';
+    }).join('');
+
+    var totalMin = tickets.reduce(function (acc, t) {
+      if (!t.start || !t.end) return acc;
+      var toMin = function (x) { var p = x.split(':'); return +p[0] * 60 + +p[1]; };
+      var m = toMin(t.end) - toMin(t.start);
+      return acc + (m < 0 ? m + 1440 : m);
+    }, 0);
+
+    $('timesheet').innerHTML =
+      '<tr><td class="nm">' + esc(WORKER) + '</td>' +
+      '<td class="num">' + closed + '</td>' +
+      '<td class="num">' + (work + fresh) + '</td>' +
+      '<td class="num">' + Math.floor(totalMin / 60) + ' ч ' + String(totalMin % 60).padStart(2, '0') + ' мин</td></tr>';
+  }
+
+  function byId(id) {
+    return tickets.filter(function (t) { return t.id === +id; })[0];
+  }
+
+  function render() {
+    var t = openId ? byId(openId) : null;
+    if (t) renderCard(t); else renderList();
+    updateHint();
+    renderDesk();
+  }
+
+  // ---------- События ----------
+  document.addEventListener('click', function (e) {
+    var el = e.target.closest('button');
+    if (!el) return;
+
+    if (el.dataset.view) {
+      document.querySelectorAll('.tabs button').forEach(function (b) {
+        b.setAttribute('aria-selected', String(b === el));
+      });
+      $('view-phone').hidden = el.dataset.view !== 'phone';
+      $('view-desk').hidden = el.dataset.view !== 'desk';
+      return;
+    }
+
+    if (el.id === 'reset') { tickets = seed(); openId = null; render(); return; }
+    if (el.dataset.back) { openId = null; render(); return; }
+    if (el.dataset.open) { openId = +el.dataset.open; render(); return; }
+
+    if (el.dataset.start) {
+      var a = byId(el.dataset.start);
+      a.status = 'work'; a.start = nowHM();
+      openId = a.id; render(); return;
+    }
+
+    if (el.dataset.finish) {
+      var b = byId(el.dataset.finish);
+      b.status = 'done'; b.end = nowHM();
+      openId = b.id; render(); return;
+    }
+
+    if (el.dataset.sign) {
+      var c = byId(el.dataset.sign);
+      if (!c.report.trim()) return;
+      c.status = 'signed';
+      c.signed = WORKER + ', ' + nowHM();
+      render(); return;
+    }
+
+    if (el.dataset.photo) {
+      var d = byId(el.dataset.photo);
+      d.photos += 1; render(); return;
+    }
+
+    if (el.dataset.move) {
+      var i = tickets.findIndex(function (t) { return t.id === +el.dataset.id; });
+      var j = el.dataset.move === 'up' ? i - 1 : i + 1;
+      if (j < 0 || j >= tickets.length) return;
+      var tmp = tickets[i]; tickets[i] = tickets[j]; tickets[j] = tmp;
+      render(); return;
+    }
+
+    // Имитация диктовки: текст набирается сам, как при распознавании речи.
+    if (el.id === 'mic') {
+      var t2 = byId(el.dataset.id);
+      if (el.classList.contains('is-rec')) return;
+      el.classList.add('is-rec');
+      el.lastChild.textContent = 'Идёт запись…';
+
+      var phrase = 'Насос заменён, старый демонтирован. Проверил на трёх режимах — течей нет, шум в норме. Запорную арматуру не менял, она в рабочем состоянии.';
+      var ta = $('report');
+      var base = ta.value ? ta.value.trim() + ' ' : '';
+      var k = 0;
+
+      var timer = setInterval(function () {
+        k += 2;
+        ta.value = base + phrase.slice(0, k);
+        t2.report = ta.value;
+        ta.scrollTop = ta.scrollHeight;
+        if (k >= phrase.length) {
+          clearInterval(timer);
+          el.classList.remove('is-rec');
+          el.lastChild.textContent = 'Записать голосом';
+          render();
+        }
+      }, 22);
+    }
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
