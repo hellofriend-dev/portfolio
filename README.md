@@ -28,7 +28,7 @@
 
 ## Контакты
 
-- Telegram: [@username](https://t.me/username)
+- Telegram: [@OfficialEmit](https://t.me/OfficialEmit)
 - GitHub: [hellofriend-dev](https://github.com/hellofriend-dev)
 
 ---
