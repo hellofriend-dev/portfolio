@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru" class="no-js">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Страница не найдена</title>
+<meta name="description" content="Такой страницы нет. Вернитесь на главную или откройте одно из демо.">
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/svg+xml" href="/portfolio/assets/favicon.svg">
+<meta name="theme-color" content="#0A0A0A">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/portfolio/assets/site.css">
+<script>document.documentElement.classList.replace('no-js','js');</script>
+<style>
+  .four{min-height:72vh;display:grid;place-items:center;text-align:center}
+  .four__code{
+    font-size:clamp(72px,14vw,150px);font-weight:600;letter-spacing:-.05em;
+    line-height:1;color:var(--accent);
+  }
+  .links{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+    background:var(--border);border:1px solid var(--border);
+    border-radius:var(--radius);overflow:hidden;margin-top:44px;text-align:left;
+  }
+  .links a{background:var(--surface);padding:20px 22px;transition:background .2s var(--ease)}
+  .links a:hover{background:var(--surface-2)}
+  .links b{display:block;font-size:var(--fs-base);font-weight:600;letter-spacing:-.01em}
+  .links span{display:block;margin-top:6px;font-size:var(--fs-sm);color:var(--text-muted);line-height:1.5}
+  @media (max-width:760px){.links{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="container header__inner">
+    <a href="/portfolio/" class="logo"><span class="logo__mark"></span>Портфолио</a>
+    <nav class="nav">
+      <a href="/portfolio/">Главная</a>
+      <a href="/portfolio/uslugi/">Возможности</a>
+      <a href="/portfolio/cases/">Кейсы</a>
+    </nav>
+    <a href="/portfolio/#zayavka" class="btn btn--primary btn--sm">Обсудить задачу</a>
+  </div>
+</header>
+
+<main class="four">
+  <div class="container">
+    <div class="four__code">404</div>
+    <h1 class="h-section" style="margin-top:18px">Такой страницы нет</h1>
+    <p class="lead" style="margin:16px auto 0">
+      Возможно, опечатка в адресе или ссылка устарела. Вот куда стоит заглянуть.
+    </p>
+
+    <div class="links">
+      <a href="/portfolio/demo/">
+        <b>Учёт инструмента</b>
+        <span>Рабочая система, 20 разделов. Вход уже подставлен</span>
+      </a>
+      <a href="/portfolio/akty/">
+        <b>Заявки и акты</b>
+        <span>Для выездных бригад: план на день, отчёт голосом, подпись</span>
+      </a>
+      <a href="/portfolio/docs/">
+        <b>Документы</b>
+        <span>Письма, акты и счета с шапкой, печатью и подписью</span>
+      </a>
+      <a href="/portfolio/uslugi/">
+        <b>Возможности и цены</b>
+        <span>Что можно заказать, сроки и что входит без доплат</span>
+      </a>
+      <a href="/portfolio/cases/">
+        <b>Кейсы</b>
+        <span>Шесть систем: задача, решение, состав работ</span>
+      </a>
+      <a href="/portfolio/">
+        <b>На главную</b>
+        <span>Начать сначала</span>
+      </a>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer__bottom" style="margin-top:0;border-top:none">
+      <span>© 2026 — разработка под заказ</span>
+      <a href="https://t.me/username" target="_blank" rel="noopener">Telegram</a>
+    </div>
+  </div>
+</footer>
+
+<script src="/portfolio/assets/site.js"></script>
+</body>
+</html>
