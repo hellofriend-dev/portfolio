@@ -1,0 +1,15 @@
+<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Учёт инструмента">
+  <!-- Нейтральный знак для демо-витрины: ящик с инструментом.
+       Фирменный логотип заказчика в публичную сборку не попадает. -->
+  <rect x="8" y="8" width="104" height="104" rx="24" fill="#0f0e0c"/>
+
+  <!-- Крышка ящика -->
+  <path d="M32 50h56a4 4 0 0 1 4 4v34a6 6 0 0 1-6 6H34a6 6 0 0 1-6-6V54a4 4 0 0 1 4-4Z"
+        fill="none" stroke="#e7a13d" stroke-width="5" stroke-linejoin="round"/>
+  <!-- Ручка -->
+  <path d="M48 50V42a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8"
+        fill="none" stroke="#e7a13d" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Замок-защёлка -->
+  <path d="M28 68h64" stroke="#e7a13d" stroke-width="5" stroke-linecap="round"/>
+  <rect x="52" y="60" width="16" height="16" rx="3" fill="#0f0e0c" stroke="#e7a13d" stroke-width="5"/>
+</svg>
