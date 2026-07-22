@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Подготовка документов — демо</title>
+<meta name="description" content="Демонстрация: письма, акты и счета собираются программой — фирменная шапка, реквизиты, сквозная нумерация, подпись и печать. PDF и Word из одного источника.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   Оболочка — в стиле витрины, лист документа — как на бумаге.
+   ============================================================ */
+:root{
+  --bg:#0A0A0A; --surface:#111111; --surface-2:#1A1A1A;
+  --accent:#6C63FF; --accent-hover:#5A52E0;
+  --text:#F5F5F5; --muted:#888888;
+  --line:rgba(255,255,255,.08); --line-2:rgba(255,255,255,.16);
+  --r:12px; --r-sm:8px;
+  --ease:cubic-bezier(.22,.61,.36,1);
+
+  /* Бумага */
+  --paper:#ffffff; --pink:#14181f; --prule:#c9ccd4; --pmuted:#5b6270;
+  --stamp:#1e4c8a;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
+  font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4,p{margin:0}
+button,input,select,textarea{font:inherit}
+a{color:inherit}
+
+.demobar{
+  background:#fff;color:#0A0A0A;padding:8px 16px;text-align:center;
+  font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
+}
+.demobar a,.demobar button{
+  color:inherit;text-decoration:underline;text-underline-offset:3px;
+  background:none;border:none;padding:0;font:inherit;cursor:pointer;
+}
+
+.wrap{max-width:1280px;margin-inline:auto;padding:26px 20px 70px}
+.head h1{font-size:clamp(22px,3.2vw,30px);letter-spacing:-.025em;line-height:1.2}
+.head p{margin-top:9px;color:var(--muted);max-width:66ch;font-size:14px}
+
+.stage{display:grid;grid-template-columns:340px minmax(0,1fr);gap:26px;margin-top:26px;align-items:start}
+
+/* ---------- Панель настроек ---------- */
+.panel{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+  padding:20px;position:sticky;top:20px;
+}
+.fld{margin-bottom:16px}
+.fld:last-child{margin-bottom:0}
+.lbl{
+  display:block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted);font-weight:600;margin-bottom:7px;
+}
+.inp,select.inp,textarea.inp{
+  width:100%;background:var(--bg);color:var(--text);
+  border:1px solid var(--line);border-radius:var(--r-sm);
+  padding:9px 11px;font-size:14px;
+}
+.inp:focus{outline:2px solid var(--accent);outline-offset:-1px}
+textarea.inp{min-height:88px;resize:vertical;line-height:1.55}
+.hint{margin-top:6px;font-size:11px;color:var(--muted);line-height:1.5}
+.hint code{background:var(--surface-2);padding:1px 5px;border-radius:4px;font-size:11px}
+
+.seg{display:flex;gap:4px;padding:4px;background:var(--bg);border:1px solid var(--line);border-radius:var(--r-sm)}
+.seg button{
+  flex:1;border:none;background:none;color:var(--muted);
+  padding:8px 6px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;
+  transition:background .15s,color .15s;
+}
+.seg button[aria-selected="true"]{background:var(--accent);color:#fff}
+
+.sw{display:flex;align-items:center;gap:10px;padding:9px 0;cursor:pointer;font-size:14px}
+.sw input{width:16px;height:16px;accent-color:var(--accent);cursor:pointer}
+.sw span{color:var(--text)}
+
+/* ---------- Выгрузка ---------- */
+.outs{margin-top:20px;padding-top:18px;border-top:1px solid var(--line)}
+.out{
+  display:flex;align-items:center;gap:11px;width:100%;
+  background:var(--bg);color:var(--text);
+  border:1px solid var(--line);border-radius:var(--r-sm);
+  padding:11px 13px;margin-bottom:7px;cursor:pointer;text-align:left;
+  transition:border-color .15s,background .15s;
+}
+.out:hover{border-color:var(--accent)}
+.out[aria-selected="true"]{border-color:var(--accent);background:rgba(108,99,255,.10)}
+.out b{display:block;font-size:13px;font-weight:600}
+.out i{display:block;font-style:normal;font-size:11px;color:var(--muted);margin-top:2px}
+.out .tag{
+  margin-left:auto;font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);border:1px solid var(--line);border-radius:100px;padding:2px 8px;
+}
+
+/* ---------- Лист ---------- */
+.sheetwrap{
+  background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r);
+  padding:26px;overflow-x:auto;
+}
+.sheet{
+  width:794px;max-width:100%;min-height:1000px;margin-inline:auto;
+  background:var(--paper);color:var(--pink);
+  padding:56px 64px 72px;
+  font-family:Georgia,'Times New Roman',serif;font-size:14px;line-height:1.6;
+  box-shadow:0 24px 60px -30px rgba(0,0,0,.85);
+  position:relative;
+}
+.sheet.is-docx{font-family:'Inter',system-ui,sans-serif}
+
+/* Шапка */
+.lh{border-bottom:2px solid var(--pink);padding-bottom:14px;margin-bottom:22px;display:flex;gap:18px;align-items:flex-start}
+.lh__mark{
+  width:52px;height:52px;flex:none;border:2px solid var(--pink);
+  display:grid;place-items:center;font-family:'Inter',sans-serif;font-weight:800;font-size:19px;letter-spacing:-.03em;
+}
+.lh__name{font-family:'Inter',sans-serif;font-weight:800;font-size:19px;letter-spacing:-.02em;line-height:1.15}
+.lh__req{margin-top:5px;font-family:'Inter',sans-serif;font-size:10.5px;color:var(--pmuted);line-height:1.5}
+
+.numrow{display:flex;justify-content:space-between;gap:24px;font-size:13px;margin-bottom:22px}
+.numrow div{white-space:nowrap}
+.numrow .u{border-bottom:1px solid var(--prule);padding:0 5px;display:inline-block;min-width:76px;text-align:center}
+
+.addr{margin-left:auto;width:270px;text-align:left;margin-bottom:22px;font-size:13.5px;line-height:1.5}
+.subj{font-weight:700;margin-bottom:16px}
+.body p{margin-bottom:11px;text-align:justify;text-indent:28px}
+.body p.noind{text-indent:0}
+
+/* Таблица акта и счёта */
+table.doc{width:100%;border-collapse:collapse;margin:16px 0;font-size:12.5px;font-family:'Inter',sans-serif}
+table.doc th,table.doc td{border:1px solid var(--pink);padding:7px 9px;text-align:left;vertical-align:top}
+table.doc th{background:#eef0f4;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em}
+table.doc td.r,table.doc th.r{text-align:right;white-space:nowrap}
+.total{margin-top:10px;text-align:right;font-size:14px;font-family:'Inter',sans-serif}
+.total b{font-size:16px}
+.words{margin-top:6px;font-size:12px;color:var(--pmuted);font-family:'Inter',sans-serif}
+
+/* Подпись */
+.sig{margin-top:44px;display:flex;align-items:flex-end;gap:20px;position:relative}
+.sig__l{flex:1}
+.sig__pos{font-size:13.5px}
+.sig__rule{margin-top:30px;border-bottom:1px solid var(--pink);width:210px}
+.sig__nm{margin-top:5px;font-size:13px}
+.sig__fx{
+  position:absolute;left:96px;bottom:24px;width:150px;height:56px;
+  pointer-events:none;
+}
+.sig__fx svg{width:100%;height:100%}
+.stamp{
+  position:absolute;right:56px;bottom:-8px;width:132px;height:132px;
+  opacity:.82;pointer-events:none;
+}
+.stamp svg{width:100%;height:100%}
+
+.exec{margin-top:52px;font-size:11px;color:var(--pmuted);font-family:'Inter',sans-serif}
+
+.docxnote{
+  margin:0 0 20px;padding:10px 13px;border-left:3px solid #b0b6c2;background:#f2f4f7;
+  font-family:'Inter',sans-serif;font-size:11.5px;color:var(--pmuted);line-height:1.55;
+}
+
+/* ---------- Пояснения ---------- */
+.notes{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:22px}
+.note{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px}
+.note h3{font-size:14px;font-weight:700}
+.note p{margin-top:8px;color:var(--muted);font-size:13px;line-height:1.6}
+.note ul{margin:9px 0 0;padding:0;list-style:none;display:grid;gap:7px}
+.note li{display:flex;gap:9px;font-size:13px;color:var(--muted);line-height:1.5}
+.note li::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--accent);flex:none;margin-top:7px}
+
+@media (max-width:1080px){
+  /* minmax(0,…) обязателен: иначе лист шириной 794px не даёт колонке сжаться
+     и всю страницу уводит горизонтально. */
+  .stage{grid-template-columns:minmax(0,1fr)}
+  .panel{position:static}
+  .notes{grid-template-columns:1fr}
+  .sheetwrap{padding:14px}
+  .sheet{padding:34px 30px 48px;min-height:0}
+}
+</style>
+</head>
+<body>
+
+<div class="demobar">
+  <a href="../">← портфолио</a> · демо-версия · компания и реквизиты вымышленные
+</div>
+
+<div class="wrap">
+  <div class="head">
+    <h1>Подготовка документов</h1>
+    <p>
+      Письма, акты и счета собирает программа: фирменная шапка, реквизиты из справочника,
+      сквозная нумерация, подпись и печать. Меняйте поля слева — документ справа
+      пересобирается сразу. Один и тот же документ выдаётся в трёх видах.
+    </p>
+  </div>
+
+  <div class="stage">
+
+    <!-- ---------- Панель ---------- -->
+    <div class="panel">
+      <div class="fld">
+        <span class="lbl">Тип документа</span>
+        <div class="seg" id="segType">
+          <button data-type="letter" aria-selected="true">Письмо</button>
+          <button data-type="act" aria-selected="false">Акт</button>
+          <button data-type="invoice" aria-selected="false">Счёт</button>
+        </div>
+      </div>
+
+      <div class="fld">
+        <label class="lbl" for="cp">Контрагент</label>
+        <select class="inp" id="cp"></select>
+        <div class="hint" id="cpReq"></div>
+      </div>
+
+      <div class="fld" id="subjFld">
+        <label class="lbl" for="subj">Тема</label>
+        <input class="inp" id="subj" value="О переносе сроков поставки оборудования">
+      </div>
+
+      <div class="fld" id="bodyFld">
+        <label class="lbl" for="text">Текст</label>
+        <textarea class="inp" id="text">Уведомляем вас о том, что поставка оборудования по договору № 47/2026 переносится на 12 августа 2026 года в связи с задержкой отгрузки у завода-изготовителя.
+Просим подтвердить согласование новых сроков в течение трёх рабочих дней.</textarea>
+      </div>
+
+      <div class="fld">
+        <label class="lbl" for="tpl">Формат номера</label>
+        <input class="inp" id="tpl" value="АВ-{N}/{YYYY}">
+        <div class="hint">
+          Токены: <code>{N}</code> номер, <code>{NN}</code> с нулями,
+          <code>{YYYY}</code> <code>{YY}</code> год, <code>{MM}</code> месяц,
+          <code>{MMMM}</code> месяц словом.
+          <br>Номер присваивается один раз и переиспользуется.
+        </div>
+      </div>
+
+      <div class="fld">
+        <label class="lbl" for="signer">Подписант</label>
+        <select class="inp" id="signer">
+          <option value="0">Ковалёв А. И. — директор</option>
+          <option value="1">Орлова М. С. — главный инженер</option>
+        </select>
+      </div>
+
+      <div class="outs">
+        <span class="lbl">Выгрузка</span>
+        <button class="out" data-out="pdf" aria-selected="true">
+          <span><b>PDF без печати</b><i>для согласования и переписки</i></span>
+          <span class="tag">pdf</span>
+        </button>
+        <button class="out" data-out="pdf-stamp" aria-selected="false">
+          <span><b>PDF с печатью и подписью</b><i>готов к отправке контрагенту</i></span>
+          <span class="tag">pdf</span>
+        </button>
+        <button class="out" data-out="docx" aria-selected="false">
+          <span><b>Word, редактируемый</b><i>всегда без подписи и печати</i></span>
+          <span class="tag">docx</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ---------- Лист ---------- -->
+    <div>
+      <div class="sheetwrap">
+        <div class="sheet" id="sheet"></div>
+      </div>
+
+      <div class="notes">
+        <div class="note">
+          <h3>Почему вёрстка написана кодом</h3>
+          <p>
+            Документы собираются программой, а не заполнением шаблона. Шаблон рано или
+            поздно разъезжается: длинное название контрагента ломает шапку, лишний абзац
+            уводит подпись на пустую страницу. Код считает разметку каждый раз заново.
+          </p>
+        </div>
+        <div class="note">
+          <h3>Что делает и чего не делает ИИ</h3>
+          <p>
+            ИИ ведёт диалог, распознаёт реквизиты с фотографии и на слух, подсказывает
+            формулировки. Но <b>вёрстку и номер он не определяет</b> — иначе документ
+            перестал бы быть предсказуемым. Это сознательное ограничение.
+          </p>
+        </div>
+        <div class="note">
+          <h3>Справочник контрагентов</h3>
+          <ul>
+            <li>Иерархия: контрагент → юрлица с реквизитами → представители</li>
+            <li>Реквизиты подставляются в документ автоматически</li>
+            <li>Ведение вручную, из файла, с фотографии или голосом</li>
+            <li>Псевдонимы для нечёткого поиска, ИНН необязателен</li>
+          </ul>
+        </div>
+        <div class="note">
+          <h3>Нумерация</h3>
+          <ul>
+            <li>Общая для компании или личная у сотрудника</li>
+            <li>Шаблон задаёт администратор</li>
+            <li>Номер присваивается один раз и не сдвигается</li>
+            <li>Отдельные счётчики по типам документов</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ---------- Вымышленные данные ----------
+  var COMPANY = {
+    short: 'СМ',
+    name: 'ООО «СтройМонтаж»',
+    address: '308000, г. Белгород, ул. Победы, д. 42, оф. 15',
+    inn: '3123001122', kpp: '312301001', ogrn: '1153123004455',
+    bank: 'Белгородское отделение №8592 ПАО Сбербанк',
+    rs: '40702810007000012345', ks: '30101810100000000633', bik: '041403633',
+    phone: '+7 (4722) 45-18-90', email: 'office@stroymontazh.example'
+  };
+
+  var PARTNERS = [
+    { name: 'ООО «Гранит-Строй»', person: 'Генеральному директору\nООО «Гранит-Строй»\nСмирнову П. В.',
+      address: '308007, г. Белгород, пр-т Славы, д. 7', inn: '3123778899', kpp: '312301001' },
+    { name: 'АО «ТеплоСеть»', person: 'Главному инженеру\nАО «ТеплоСеть»\nЛебедевой О. Н.',
+      address: '305040, г. Курск, ул. Энергетиков, д. 3', inn: '4632110045', kpp: '463201001' },
+    { name: 'ИП Соколов В. А.', person: 'Индивидуальному предпринимателю\nСоколову В. А.',
+      address: '394000, г. Воронеж, ул. Кольцовская, д. 21, кв. 8', inn: '366312990011', kpp: '—' }
+  ];
+
+  var SIGNERS = [
+    { pos: 'Директор', name: 'А. И. Ковалёв' },
+    { pos: 'Главный инженер', name: 'М. С. Орлова' }
+  ];
+
+  var ROWS_ACT = [
+    ['Монтаж узла учёта тепловой энергии', 'шт.', 1, 84000],
+    ['Пусконаладочные работы', 'шт.', 1, 21500],
+    ['Опрессовка контура, 6 бар', 'точка', 3, 4200]
+  ];
+  var ROWS_INV = [
+    ['Насос циркуляционный Grundfos UPS 32-80', 'шт.', 2, 18900],
+    ['Кран шаровой Ду50', 'шт.', 6, 2450],
+    ['Монтажные работы', 'усл.', 1, 34000]
+  ];
+
+  var state = { type: 'letter', partner: 0, signer: 0, out: 'pdf', number: 14 };
+
+  var $ = function (s) { return document.querySelector(s); };
+  var esc = function (v) {
+    return String(v).replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; });
+  };
+  var money = function (n) { return n.toLocaleString('ru-RU') + ' ₽'; };
+
+  var MONTHS = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+
+  function formatNumber(tpl) {
+    var d = new Date();
+    var pad = function (n, w) { return String(n).padStart(w, '0'); };
+    return String(tpl || '{N}')
+      .replace(/\{NNNN\}/g, pad(state.number, 4))
+      .replace(/\{NNN\}/g, pad(state.number, 3))
+      .replace(/\{NN\}/g, pad(state.number, 2))
+      .replace(/\{N\}/g, String(state.number))
+      .replace(/\{YYYY\}/g, String(d.getFullYear()))
+      .replace(/\{YY\}/g, pad(d.getFullYear() % 100, 2))
+      .replace(/\{MMMM\}/g, MONTHS[d.getMonth()])
+      .replace(/\{MM\}/g, pad(d.getMonth() + 1, 2))
+      .replace(/\{DD\}/g, pad(d.getDate(), 2));
+  }
+
+  function dateLong() {
+    var d = new Date();
+    return d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear() + ' г.';
+  }
+
+  // ---------- Печать и факсимиле ----------
+  function stampSvg() {
+    return '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">' +
+      '<g fill="none" stroke="' + '#1e4c8a' + '" stroke-width="3">' +
+      '<circle cx="100" cy="100" r="94"/><circle cx="100" cy="100" r="86"/><circle cx="100" cy="100" r="58"/></g>' +
+      '<path id="arcTop" d="M100,100 m-74,0 a74,74 0 0,1 148,0" fill="none"/>' +
+      '<path id="arcBot" d="M100,100 m-70,0 a70,70 0 0,0 140,0" fill="none"/>' +
+      '<text fill="#1e4c8a" font-family="Inter,sans-serif" font-size="15" font-weight="700" letter-spacing="1.5">' +
+      '<textPath href="#arcTop" startOffset="50%" text-anchor="middle">ООО «СТРОЙМОНТАЖ»</textPath></text>' +
+      '<text fill="#1e4c8a" font-family="Inter,sans-serif" font-size="11" letter-spacing="1">' +
+      '<textPath href="#arcBot" startOffset="50%" text-anchor="middle">ОГРН 1153123004455</textPath></text>' +
+      '<text x="100" y="90" fill="#1e4c8a" font-family="Inter,sans-serif" font-size="13" font-weight="700" text-anchor="middle">ДЛЯ</text>' +
+      '<text x="100" y="108" fill="#1e4c8a" font-family="Inter,sans-serif" font-size="13" font-weight="700" text-anchor="middle">ДОКУМЕНТОВ</text>' +
+      '<text x="100" y="126" fill="#1e4c8a" font-family="Inter,sans-serif" font-size="10" text-anchor="middle">г. Белгород</text>' +
+      '</svg>';
+  }
+
+  function signSvg() {
+    return '<svg viewBox="0 0 300 110" xmlns="http://www.w3.org/2000/svg">' +
+      '<path d="M12 78 C 40 18, 62 16, 70 52 C 76 80, 92 84, 104 58 C 116 32, 132 30, 138 60 ' +
+      'C 144 88, 166 86, 182 54 C 196 26, 214 30, 220 58 C 226 84, 250 82, 288 42" ' +
+      'fill="none" stroke="#1a3a6b" stroke-width="4.5" stroke-linecap="round"/>' +
+      '<path d="M150 88 C 190 74, 236 70, 276 74" fill="none" stroke="#1a3a6b" stroke-width="2.6" stroke-linecap="round"/>' +
+      '</svg>';
+  }
+
+  // ---------- Сборка документа ----------
+  function letterhead() {
+    return '<div class="lh">' +
+      '<div class="lh__mark">' + COMPANY.short + '</div>' +
+      '<div>' +
+        '<div class="lh__name">' + esc(COMPANY.name) + '</div>' +
+        '<div class="lh__req">' +
+          esc(COMPANY.address) + '<br>' +
+          'ИНН ' + COMPANY.inn + ' · КПП ' + COMPANY.kpp + ' · ОГРН ' + COMPANY.ogrn + '<br>' +
+          'тел. ' + COMPANY.phone + ' · ' + COMPANY.email +
+        '</div>' +
+      '</div></div>';
+  }
+
+  function tableRows(rows) {
+    var sum = 0;
+    var body = rows.map(function (r, i) {
+      var total = r[2] * r[3];
+      sum += total;
+      return '<tr><td class="r">' + (i + 1) + '</td><td>' + esc(r[0]) + '</td>' +
+        '<td class="r">' + r[1] + '</td><td class="r">' + r[2] + '</td>' +
+        '<td class="r">' + money(r[3]) + '</td><td class="r">' + money(total) + '</td></tr>';
+    }).join('');
+    return { html: body, sum: sum };
+  }
+
+  function render() {
+    var p = PARTNERS[state.partner];
+    var s = SIGNERS[state.signer];
+    var isDocx = state.out === 'docx';
+    var showMarks = state.out === 'pdf-stamp';
+    var num = formatNumber($('#tpl').value);
+
+    var head =
+      letterhead() +
+      (isDocx ? '<div class="docxnote">Файл Word открывается и правится в обычном редакторе. ' +
+        'Подпись и печать в него не попадают никогда — только в PDF.</div>' : '');
+
+    var content = '';
+
+    if (state.type === 'letter') {
+      content =
+        '<div class="numrow">' +
+          '<div>Исх. № <span class="u">' + esc(num) + '</span> от <span class="u">' + dateLong() + '</span></div>' +
+          '<div>на вх. № <span class="u">—</span> от <span class="u">—</span></div>' +
+        '</div>' +
+        '<div class="addr">' + esc(p.person).replace(/\n/g, '<br>') + '<br>' + esc(p.address) + '</div>' +
+        '<div class="subj">' + esc($('#subj').value) + '</div>' +
+        '<div class="body">' +
+          $('#text').value.split(/\n+/).filter(Boolean)
+            .map(function (x) { return '<p>' + esc(x) + '</p>'; }).join('') +
+        '</div>';
+    } else if (state.type === 'act') {
+      var a = tableRows(ROWS_ACT);
+      content =
+        '<div class="numrow"><div>Акт № <span class="u">' + esc(num) + '</span> от <span class="u">' + dateLong() + '</span></div></div>' +
+        '<div class="subj">Акт сдачи-приёмки выполненных работ</div>' +
+        '<div class="body"><p class="noind">Исполнитель: ' + esc(COMPANY.name) + ', ИНН ' + COMPANY.inn + '.</p>' +
+        '<p class="noind">Заказчик: ' + esc(p.name) + ', ИНН ' + esc(p.inn) + '.</p></div>' +
+        '<table class="doc"><thead><tr><th class="r">№</th><th>Наименование работ</th>' +
+        '<th class="r">Ед.</th><th class="r">Кол-во</th><th class="r">Цена</th><th class="r">Сумма</th></tr></thead>' +
+        '<tbody>' + a.html + '</tbody></table>' +
+        '<div class="total">Итого: <b>' + money(a.sum) + '</b></div>' +
+        '<div class="words">Работы выполнены полностью и в срок. Заказчик претензий не имеет.</div>';
+    } else {
+      var v = tableRows(ROWS_INV);
+      content =
+        '<div class="numrow"><div>Счёт № <span class="u">' + esc(num) + '</span> от <span class="u">' + dateLong() + '</span></div></div>' +
+        '<table class="doc"><tbody>' +
+          '<tr><td>Банк получателя</td><td>' + esc(COMPANY.bank) + '</td>' +
+          '<td class="r">БИК</td><td>' + COMPANY.bik + '</td></tr>' +
+          '<tr><td>Получатель</td><td>' + esc(COMPANY.name) + '</td>' +
+          '<td class="r">Сч. №</td><td>' + COMPANY.rs + '</td></tr>' +
+          '<tr><td>ИНН / КПП</td><td>' + COMPANY.inn + ' / ' + COMPANY.kpp + '</td>' +
+          '<td class="r">К/с</td><td>' + COMPANY.ks + '</td></tr>' +
+        '</tbody></table>' +
+        '<div class="body"><p class="noind">Плательщик: ' + esc(p.name) + ', ИНН ' + esc(p.inn) + '</p></div>' +
+        '<table class="doc"><thead><tr><th class="r">№</th><th>Наименование</th>' +
+        '<th class="r">Ед.</th><th class="r">Кол-во</th><th class="r">Цена</th><th class="r">Сумма</th></tr></thead>' +
+        '<tbody>' + v.html + '</tbody></table>' +
+        '<div class="total">К оплате: <b>' + money(v.sum) + '</b></div>' +
+        '<div class="words">Без НДС. Оплата в течение 5 банковских дней.</div>';
+    }
+
+    var sig =
+      '<div class="sig">' +
+        '<div class="sig__l">' +
+          '<div class="sig__pos">' + esc(s.pos) + ' ' + esc(COMPANY.name) + '</div>' +
+          '<div class="sig__rule"></div>' +
+          '<div class="sig__nm">' + esc(s.name) + '</div>' +
+        '</div>' +
+        (showMarks ? '<div class="sig__fx">' + signSvg() + '</div><div class="stamp">' + stampSvg() + '</div>' : '') +
+      '</div>' +
+      '<div class="exec">Исп.: Петрова Е. А., тел. ' + COMPANY.phone + '</div>';
+
+    var sheet = $('#sheet');
+    sheet.className = 'sheet' + (isDocx ? ' is-docx' : '');
+    sheet.innerHTML = head + content + sig;
+
+    $('#cpReq').innerHTML = 'ИНН ' + esc(p.inn) + ' · КПП ' + esc(p.kpp) + '<br>' + esc(p.address);
+  }
+
+  // ---------- Инициализация ----------
+  $('#cp').innerHTML = PARTNERS.map(function (p, i) {
+    return '<option value="' + i + '">' + esc(p.name) + '</option>';
+  }).join('');
+
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('button');
+    if (!b) return;
+
+    if (b.dataset.type) {
+      state.type = b.dataset.type;
+      document.querySelectorAll('#segType button').forEach(function (x) {
+        x.setAttribute('aria-selected', String(x === b));
+      });
+      // Тема и текст нужны только письму
+      var isLetter = state.type === 'letter';
+      $('#subjFld').style.display = isLetter ? '' : 'none';
+      $('#bodyFld').style.display = isLetter ? '' : 'none';
+      render();
+    }
+
+    if (b.dataset.out) {
+      state.out = b.dataset.out;
+      document.querySelectorAll('.out').forEach(function (x) {
+        x.setAttribute('aria-selected', String(x === b));
+      });
+      render();
+    }
+  });
+
+  ['#cp', '#signer'].forEach(function (sel) {
+    $(sel).addEventListener('change', function () {
+      if (sel === '#cp') state.partner = +this.value; else state.signer = +this.value;
+      render();
+    });
+  });
+
+  ['#subj', '#text', '#tpl'].forEach(function (sel) {
+    $(sel).addEventListener('input', render);
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
