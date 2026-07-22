@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="ru" class="no-js">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Кейсы — какие системы я делал</title>
+<meta name="description" content="Шесть работающих систем: учёт инструмента, подготовка документов, акты для выездных бригад, заявки на закуп, сервис переписки, выгрузка истории Telegram.">
+
+<!-- ЗАМЕНИТЬ ПЕРЕД ПУБЛИКАЦИЕЙ: https://t.me/username → реальный ник -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/site.css">
+<script>document.documentElement.classList.replace('no-js','js');</script>
+<style>
+.case{
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  background:var(--surface);
+  overflow:hidden;
+}
+.case + .case{margin-top:20px}
+.case__head{
+  padding:32px 32px 26px;
+  border-bottom:1px solid var(--border);
+  display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px 28px;align-items:start;
+}
+.case__num{font-size:var(--fs-mono);letter-spacing:.12em;color:var(--accent);font-weight:600;margin-bottom:12px}
+.case__who{
+  margin-top:10px;font-size:var(--fs-sm);color:var(--text-muted);
+  display:flex;flex-wrap:wrap;gap:6px 18px;
+}
+.case__who span{display:inline-flex;align-items:center;gap:8px}
+.case__who span::before{content:"";width:4px;height:4px;border-radius:50%;background:var(--accent);flex:none}
+.case__live{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:0 16px;min-height:40px;border-radius:var(--radius-sm);
+  background:var(--accent);color:#fff;font-size:var(--fs-sm);font-weight:600;
+  transition:background .2s var(--ease);white-space:nowrap;
+}
+.case__live:hover{background:var(--accent-hover)}
+.case__live .arr{transition:transform .25s var(--ease)}
+.case__live:hover .arr{transform:translateX(3px)}
+
+.case__body{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+  background:var(--border);
+}
+.case__col{background:var(--surface);padding:26px 30px}
+.case__col h4{
+  font-size:var(--fs-mono);letter-spacing:.12em;text-transform:uppercase;
+  color:var(--text-muted);font-weight:500;margin-bottom:14px;
+}
+.case__col p{color:var(--text-muted);font-size:var(--fs-sm);line-height:1.7;text-wrap:pretty}
+.case__foot{
+  padding:20px 32px;border-top:1px solid var(--border);
+  display:flex;flex-wrap:wrap;gap:10px 20px;align-items:center;justify-content:space-between;
+}
+.case__scale{font-size:var(--fs-mono);letter-spacing:.06em;color:var(--text-muted)}
+.case__scale b{color:var(--text);font-weight:600}
+
+.note{
+  border:1px solid var(--border);border-left:1px solid var(--accent);
+  border-radius:var(--radius);background:var(--surface);
+  padding:24px 28px;
+}
+.note p{color:var(--text-muted);font-size:var(--fs-sm);line-height:1.7;text-wrap:pretty}
+.note p + p{margin-top:10px}
+
+@media (max-width:1000px){
+  .case__body{grid-template-columns:1fr}
+  .case__head{grid-template-columns:1fr;padding:26px 24px 22px}
+  .case__col{padding:22px 24px}
+  .case__foot{padding:18px 24px}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="container header__inner">
+    <a href="../" class="logo"><span class="logo__mark"></span>Портфолио</a>
+    <nav class="nav">
+      <a href="../">Главная</a>
+      <a href="../uslugi/">Возможности</a>
+      <a href="./" aria-current="page">Кейсы</a>
+      <a href="../demo/">Живое демо</a>
+    </nav>
+    <a href="#zayavka" class="btn btn--primary btn--sm">Обсудить задачу</a>
+  </div>
+</header>
+
+<main>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero__bg" aria-hidden="true">
+      <div class="hero__glow"></div>
+      <div class="hero__grid"></div>
+    </div>
+    <div class="container hero__inner">
+      <div class="badge" data-reveal><span class="dot"></span>Системы в работе</div>
+      <h1 class="h-display" data-reveal style="--d:60ms">Кейсы</h1>
+      <p class="lead" data-reveal style="--d:130ms;margin-top:22px">
+        Шесть систем, которые я спроектировал и написал. Названия компаний не указываю —
+        это условие работы с заказчиками. Всё остальное описано как есть.
+      </p>
+
+      <div class="stats" data-reveal style="--d:200ms;margin-top:48px">
+        <div class="stats__item"><b>6</b><span>систем</span></div>
+        <div class="stats__item"><b>4</b><span>вида интерфейсов</span></div>
+        <div class="stats__item"><b>2 700+</b><span>рабочих коммитов</span></div>
+        <div class="stats__item"><b>3 года</b><span>практики</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- КЕЙСЫ -->
+  <section class="section">
+    <div class="container">
+
+      <!-- 01 -->
+      <article class="case" data-reveal>
+        <div class="case__head">
+          <div>
+            <div class="case__num">01</div>
+            <h2 class="h-card">Учёт инструмента на складе</h2>
+            <div class="case__who">
+              <span>Строительная компания</span>
+              <span>Бот, мини-приложение и веб-панель</span>
+            </div>
+          </div>
+          <a href="../demo/" class="case__live">Открыть демо <span class="arr">→</span></a>
+        </div>
+        <div class="case__body">
+          <div class="case__col">
+            <h4>Задача</h4>
+            <p>
+              Инструмент выдавали под запись в тетради. Когда что-то пропадало, найти
+              концы было невозможно: кто взял, кому передал дальше, вернул ли. Бригадиры
+              звонили друг другу и выясняли это вручную.
+            </p>
+          </div>
+          <div class="case__col">
+            <h4>Что сделал</h4>
+            <p>
+              Каждая единица получила инвентарный номер и карточку с историей. Передача
+              между сотрудниками требует подтверждения получателем — пока он не принял,
+              инструмент числится за отправителем. Роли: рабочий видит своё, бригадир —
+              бригаду, администратор — всё.
+            </p>
+          </div>
+          <div class="case__col">
+            <h4>Что внутри</h4>
+            <p>
+              Три интерфейса на одной базе: бот, мини-приложение в Telegram и панель
+              для руководителя. Отчёты в Excel, PDF и Word. Уведомления в Telegram и по SMS.
+              Поиск по базе обычными словами через ИИ. Дублирующий бот для мессенджера Max.
+            </p>
+          </div>
+        </div>
+        <div class="case__foot">
+          <div class="chips">
+            <span class="chip">Python</span><span class="chip">FastAPI</span><span class="chip">aiogram 3</span>
+            <span class="chip">PostgreSQL</span><span class="chip">React</span><span class="chip">Docker</span>
+          </div>
+          <div class="case__scale"><b>187</b> модулей · <b>49 000</b> строк</div>
+        </div>
+      </article>
+
+      <!-- 02 -->
+      <article class="case" data-reveal>
+        <div class="case__head">
+          <div>
+            <div class="case__num">02</div>
+            <h2 class="h-card">Подготовка исходящих документов</h2>
+            <div class="case__who">
+              <span>Строительная компания</span>
+              <span>Бот и мини-приложение</span>
+            </div>
+          </div>
+        </div>
+        <div class="case__body">
+          <div class="case__col">
+            <h4>Задача</h4>
+            <p>
+              Письма и акты набирали в Word вручную: каждый раз заново вставляли шапку,
+              реквизиты и подпись. Нумерация велась в отдельном файле, из-за чего
+              регулярно случались повторы и пропуски номеров.
+            </p>
+          </div>
+          <div class="case__col">
+            <h4>Что сделал</h4>
+            <p>
+              Документы теперь собирает программа. Реквизиты подтягиваются из справочника
+              контрагентов, номер присваивается один раз по заданному шаблону и
+              переиспользуется. Один документ выдаётся в трёх видах: PDF без печати,
+              PDF с печатью и факсимиле подписи, редактируемый Word.
+            </p>
+          </div>
+          <div class="case__col">
+            <h4>Что внутри</h4>
+            <p>
+              Вёрстка документов написана кодом, а не шаблонами — поэтому она предсказуема.
+              ИИ помогает вести диалог и распознавать реквизиты с фото и на слух, но
+              вёрстку и номер не определяет: это сознательное ограничение.
+            </p>
+          </div>
+        </div>
+        <div class="case__foot">
+          <div class="chips">
+            <span class="chip">Python</span><span class="chip">FastAPI</span><span class="chip">ReportLab</span>
+            <span class="chip">python-docx</span><span class="chip">PostgreSQL</span><span class="chip">Alembic</span>
+          </div>
+          <div class="case__scale"><b>202</b> модуля · <b>977</b> коммитов</div>
+        </div>
+      </article>
+
+      <!-- 03 -->
+      <article class="case" data-reveal>
+        <div class="case__head">
+          <div>
+            <div class="case__num">03</div>
+            <h2 class="h-card">Заявки и акты для монтажных бригад</h2>
+            <div class="case__who">
+              <span>Монтажная организация</span>
+              <span>Приложение на телефон и панель администратора</span>
+            </div>
+          </div>
+        </div>
+        <div class="case__body">
+          <div class="case__col">
+            <h4>Задача</h4>
+            <p>
+              Бригады работают на выезде. Отчёт составлялся вечером по памяти, фотографии
+              присылали в общий чат, где они терялись. Понять, сколько времени заняла
+              конкретная заявка, было нельзя.
+            </p>
+          </div>
+          <div class="case__col">
+            <h4>Что сделал</h4>
+            <p>
+              Заявка проходит путь «новая → в работе → завершена → подписана». Время начала
+              и окончания фиксируется по нажатию кнопки, а не со слов. Отчёт диктуется
+              голосом прямо на объекте. После подписи сервер отклоняет любые изменения.
+            </p>
+          </div>
+          <div class="case__col">
+            <h4>Что внутри</h4>
+            <p>
+              Два интерфейса в одном приложении: телефон для бригады, компьютер для
+              администратора. Ставится на телефон по ссылке, без магазина приложений.
+              Заявки на день выстраиваются в план, порядок меняется стрелками. Табель
+              считается по фактическому времени.
+            </p>
+          </div>
+        </div>
+        <div class="case__foot">
+          <div class="chips">
+            <span class="chip">Next.js 15</span><span class="chip">React 19</span><span class="chip">TypeScript</span>
+            <span class="chip">Prisma</span><span class="chip">PostgreSQL</span><span class="chip">PWA</span>
+          </div>
+          <div class="case__scale"><b>167</b> файлов</div>
+        </div>
+      </article>
+
+      <!-- 04 -->
+      <article class="case" data-reveal>
+        <div class="case__head">
+          <div>
+            <div class="case__num">04</div>
+            <h2 class="h-card">Заявки на закуп материалов</h2>
+            <div class="case__who">
+              <span>Снабжение</span>
+              <span>Приложение для iPhone и сервер</span>
+            </div>
+          </div>
+        </div>
+        <div class="case__body">
+          <div class="case__col">
+            <h4>Задача</h4>
+            <p>
+              Приложение работало, но хранило все данные в облачной папке. Файлы
+              конфликтовали при одновременной правке, а искать что-либо по папкам
+              было невозможно.
+            </p>
+          </div>
+          <div class="case__col">
+            <h4>Что сделал</h4>
+            <p>
+              Перевёл хранение на собственный сервер с базой данных, сохранив привычный
+              интерфейс приложения. Синхронизация идёт по отдельным карточкам, а не
+              целыми файлами — правки перестали затирать друг друга.
+            </p>
+          </div>
+          <div class="case__col">
+            <h4>Что внутри</h4>
+            <p>
+              Приложение на Swift, сервер на Node. Развёрнуто на облачном хостинге
+              с автоматической пересборкой при обновлении кода. Дальше планируется
+              веб-версия на том же сервере.
+            </p>
+          </div>
+        </div>
+        <div class="case__foot">
+          <div class="chips">
+            <span class="chip">Swift</span><span class="chip">Node.js</span><span class="chip">Fastify</span>
+            <span class="chip">PostgreSQL</span><span class="chip">Railway</span>
+          </div>
+          <div class="case__scale"><b>44</b> файла Swift</div>
+        </div>
+      </article>
+
+      <!-- 05 -->
+      <article class="case" data-reveal>
+        <div class="case__head">
+          <div>
+            <div class="case__num">05</div>
+            <h2 class="h-card">Сервис переписки между программами</h2>
+            <div class="case__who">
+              <span>Внутренняя инфраструктура</span>
+              <span>Backend без интерфейса</span>
+            </div>
+          </div>
+        </div>
+        <div class="case__body">
+          <div class="case__col">
+            <h4>Задача</h4>
+            <p>
+              В двух разных системах одного заказчика понадобилась переписка между
+              сотрудниками. Писать её дважды означало бы удвоить и разработку,
+              и последующую поддержку.
+            </p>
+          </div>
+          <div class="case__col">
+            <h4>Что сделал</h4>
+            <p>
+              Вынес чат в отдельный сервис — единственный владелец правды о сообщениях.
+              Обе системы подключаются к нему как клиенты. Человек опознаётся по номеру
+              участника: один номер в двух программах — это один человек и общая переписка.
+            </p>
+          </div>
+          <div class="case__col">
+            <h4>Что внутри</h4>
+            <p>
+              Версионированный контракт: старые клиенты не ломаются при обновлении.
+              Сообщения приходят мгновенно через постоянное соединение. Токены доступа
+              хранятся только в виде хешей и отзываются в любой момент. Покрыто тестами.
+            </p>
+          </div>
+        </div>
+        <div class="case__foot">
+          <div class="chips">
+            <span class="chip">FastAPI</span><span class="chip">SQLAlchemy 2.0</span><span class="chip">asyncpg</span>
+            <span class="chip">WebSocket</span><span class="chip">Alembic</span><span class="chip">pytest</span>
+          </div>
+          <div class="case__scale">Контракт <b>/v1</b> · 2 системы-клиента</div>
+        </div>
+      </article>
+
+      <!-- 06 -->
+      <article class="case" data-reveal>
+        <div class="case__head">
+          <div>
+            <div class="case__num">06</div>
+            <h2 class="h-card">Выгрузка истории Telegram-групп</h2>
+            <div class="case__who">
+              <span>Утилита</span>
+              <span>Сайт</span>
+            </div>
+          </div>
+        </div>
+        <div class="case__body">
+          <div class="case__col">
+            <h4>Задача</h4>
+            <p>
+              Требовалось сохранить переписку рабочих групп в виде файла — для архива
+              и последующего анализа. Штатными средствами Telegram это делается неудобно
+              и не для всех типов групп.
+            </p>
+          </div>
+          <div class="case__col">
+            <h4>Что сделал</h4>
+            <p>
+              Сайт, на котором пользователь временно входит в свой аккаунт, выбирает
+              нужные группы и получает файл с историей. Личные переписки не затрагиваются,
+              медиафайлы не скачиваются — сохраняются только сведения о них.
+            </p>
+          </div>
+          <div class="case__col">
+            <h4>Что внутри</h4>
+            <p>
+              Работа идёт не через обычного бота, а через клиентский протокол Telegram —
+              только так доступна полная история групп. Вход в архивариус защищён паролем,
+              сессия временная.
+            </p>
+          </div>
+        </div>
+        <div class="case__foot">
+          <div class="chips">
+            <span class="chip">Python</span><span class="chip">FastAPI</span><span class="chip">MTProto</span>
+            <span class="chip">Docker</span>
+          </div>
+          <div class="case__scale">С автотестами</div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ЧЕСТНАЯ ОГОВОРКА -->
+  <section class="section--tight">
+    <div class="container">
+      <div class="note" data-reveal>
+        <p>
+          <b>Почему здесь нет цифр вроде «выручка выросла на 40%».</b>
+          Потому что я их не измерял и не хочу выдумывать. Разработчик отвечает
+          за то, что система работает, удобна и не теряет данные, — а на выручку
+          влияет слишком многое помимо кода.
+        </p>
+        <p>
+          Всё, что описано выше, можно проверить: система учёта инструмента открыта
+          для тестирования в разделе «Живое демо», по остальным готов показать экраны
+          и рассказать детали на созвоне.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section" id="zayavka">
+    <div class="container">
+      <div class="cta" data-reveal>
+        <div class="eyebrow eyebrow--center">Заявка</div>
+        <h2 class="h-section">Похожая задача?</h2>
+        <p class="lead">
+          Если узнали в кейсах свою ситуацию — скорее всего, половина работы уже сделана
+          и внедрение будет быстрее и дешевле, чем разработка с нуля.
+        </p>
+        <div class="cta__actions">
+          <a href="https://t.me/username" class="btn btn--primary" target="_blank" rel="noopener">
+            Написать в Telegram <span class="arr">→</span>
+          </a>
+          <a href="../uslugi/" class="btn btn--ghost">Возможности и цены</a>
+        </div>
+        <div class="cta__note">Оценка бесплатная · отвечаю в течение 2 часов</div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div class="footer__col--brand">
+        <a href="../" class="logo"><span class="logo__mark"></span>Портфолио</a>
+        <p>Системы учёта, боты и сайты для строительных, монтажных и сервисных компаний.</p>
+      </div>
+      <div>
+        <h4>Разделы</h4>
+        <ul>
+          <li><a href="../">Главная</a></li>
+          <li><a href="../uslugi/">Возможности</a></li>
+          <li><a href="./">Кейсы</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Посмотреть</h4>
+        <ul>
+          <li><a href="../demo/">Система учёта</a></li>
+          <li><a href="../landing/">Лендинг</a></li>
+          <li><a href="../vizitka/">Визитка</a></li>
+          <li><a href="../bot-demo/">Демо бота</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <span>© 2026 — разработка под заказ</span>
+      <a href="https://t.me/username" target="_blank" rel="noopener">Telegram</a>
+    </div>
+  </div>
+</footer>
+
+<script src="../assets/site.js"></script>
+</body>
+</html>

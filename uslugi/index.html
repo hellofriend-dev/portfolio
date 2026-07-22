@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="ru" class="no-js">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Возможности и цены — что можно заказать</title>
+<meta name="description" content="Telegram-боты, веб-панели, сайты, мобильные и десктоп-приложения, генерация документов. Сроки, цены и что входит в каждую работу.">
+
+<!-- ЗАМЕНИТЬ ПЕРЕД ПУБЛИКАЦИЕЙ: https://t.me/username → реальный ник -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/site.css">
+<script>document.documentElement.classList.replace('no-js','js');</script>
+<style>
+/* Навигатор «что вам нужно» */
+.finder{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:1px;
+  background:var(--border);border:1px solid var(--border);
+  border-radius:var(--radius);overflow:hidden;
+}
+.finder__row{
+  background:var(--bg);padding:22px 26px;
+  display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:12px 28px;align-items:center;
+  transition:background .2s var(--ease);
+}
+.finder__row:hover{background:var(--surface)}
+.finder__q{font-size:var(--fs-base);line-height:1.45;text-wrap:pretty}
+.finder__a{
+  display:inline-flex;align-items:center;gap:8px;justify-self:end;
+  font-size:var(--fs-sm);font-weight:600;color:var(--accent);text-align:right;
+}
+.finder__a .arr{transition:transform .25s var(--ease)}
+.finder__row:hover .arr{transform:translateX(4px)}
+
+/* Блок направления */
+.service{
+  border:1px solid var(--border);border-radius:var(--radius);
+  background:var(--surface);overflow:hidden;
+  display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);
+}
+.service + .service{margin-top:20px}
+.service__main{padding:34px 32px}
+.service__side{
+  padding:34px 32px;background:var(--bg);
+  border-left:1px solid var(--border);
+  display:flex;flex-direction:column;
+}
+.service__num{font-size:var(--fs-mono);letter-spacing:.12em;color:var(--accent);font-weight:600;margin-bottom:14px}
+.service__main > p{margin-top:14px;color:var(--text-muted);font-size:var(--fs-sm);line-height:1.7;text-wrap:pretty}
+.service__side h4{
+  font-size:var(--fs-mono);letter-spacing:.12em;text-transform:uppercase;
+  color:var(--text-muted);font-weight:500;margin-bottom:14px;
+}
+.service__price{
+  margin-top:auto;padding-top:22px;border-top:1px solid var(--border);
+  font-size:var(--fs-sm);color:var(--text-muted);
+}
+.service__price b{display:block;color:var(--text);font-weight:600;font-size:24px;letter-spacing:-0.03em;margin-bottom:4px}
+.service__demo{
+  display:inline-flex;align-items:center;gap:8px;margin-top:16px;
+  font-size:var(--fs-sm);font-weight:600;color:var(--accent);
+}
+.service__demo:hover .arr{transform:translateX(4px)}
+.service__demo .arr{transition:transform .25s var(--ease)}
+
+/* Готовые решения */
+.ready{
+  border:1px solid var(--border);border-radius:var(--radius);
+  background:var(--surface);padding:28px 26px;
+  display:flex;flex-direction:column;
+}
+.ready__tag{
+  display:inline-flex;align-self:flex-start;align-items:center;
+  padding:4px 10px;margin-bottom:16px;
+  border:1px solid rgba(108,99,255,.4);border-radius:100px;
+  background:rgba(108,99,255,.10);
+  font-size:var(--fs-mono);letter-spacing:.1em;text-transform:uppercase;color:#cfccff;
+}
+
+/* Что входит всегда */
+.always{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:1px;
+  background:var(--border);border:1px solid var(--border);
+  border-radius:var(--radius);overflow:hidden;
+}
+.always__item{background:var(--surface);padding:24px 26px}
+.always__item h4{font-size:var(--fs-base);font-weight:600;letter-spacing:-0.01em}
+.always__item p{margin-top:8px;color:var(--text-muted);font-size:var(--fs-sm);line-height:1.6;text-wrap:pretty}
+
+/* Шаги */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.step{padding-top:24px;border-top:1px solid var(--border);position:relative}
+.step::after{
+  content:"";position:absolute;top:-1px;left:0;width:0;height:1px;background:var(--accent);
+  transition:width .7s var(--ease);transition-delay:var(--d,0ms);
+}
+.step.is-visible::after{width:100%}
+.step__num{font-size:var(--fs-mono);letter-spacing:.12em;color:var(--accent);font-weight:600;margin-bottom:12px}
+.step h3{font-size:var(--fs-lg);font-weight:600;letter-spacing:-0.02em}
+.step p{margin-top:8px;color:var(--text-muted);font-size:var(--fs-sm);line-height:1.6;text-wrap:pretty}
+
+@media (max-width:1000px){
+  .service{grid-template-columns:1fr}
+  .service__side{border-left:none;border-top:1px solid var(--border)}
+  .finder{grid-template-columns:1fr}
+  .steps{grid-template-columns:1fr 1fr;gap:28px 20px}
+}
+@media (max-width:680px){
+  .finder__row{grid-template-columns:1fr;gap:10px;padding:20px}
+  .finder__a{justify-self:start;text-align:left}
+  .service__main,.service__side{padding:26px 22px}
+  .always{grid-template-columns:1fr}
+  .steps{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="container header__inner">
+    <a href="../" class="logo"><span class="logo__mark"></span>Портфолио</a>
+    <nav class="nav">
+      <a href="../">Главная</a>
+      <a href="./" aria-current="page">Возможности</a>
+      <a href="../cases/">Кейсы</a>
+      <a href="../demo/">Живое демо</a>
+    </nav>
+    <a href="#zayavka" class="btn btn--primary btn--sm">Обсудить задачу</a>
+  </div>
+</header>
+
+<main>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero__bg" aria-hidden="true">
+      <div class="hero__glow"></div>
+      <div class="hero__grid"></div>
+    </div>
+    <div class="container hero__inner">
+      <div class="badge" data-reveal><span class="dot"></span>Оценка бесплатная</div>
+      <h1 class="h-display" data-reveal style="--d:60ms">Что можно заказать</h1>
+      <p class="lead" data-reveal style="--d:130ms;margin-top:22px">
+        Ниже — всё, что я делаю, с ценами и сроками. Если не знаете, к какому пункту
+        относится ваша задача, начните с таблицы: там задачи описаны обычными словами.
+      </p>
+    </div>
+  </section>
+
+  <!-- НАВИГАТОР ПО ЗАДАЧАМ -->
+  <section class="section--tight">
+    <div class="container">
+      <div class="eyebrow" data-reveal>Начните отсюда</div>
+      <h2 class="h-section" data-reveal style="--d:60ms">Найдите свою задачу</h2>
+      <p class="lead" data-reveal style="--d:100ms;margin-top:14px;margin-bottom:36px">
+        Слева — как задача звучит у заказчика. Справа — что для неё нужно.
+      </p>
+
+      <div class="finder">
+        <a class="finder__row" href="#boty" data-reveal>
+          <div class="finder__q">«Клиенты пишут в мессенджер, а я не успеваю отвечать и теряю заявки»</div>
+          <span class="finder__a">Telegram-бот <span class="arr">→</span></span>
+        </a>
+        <a class="finder__row" href="#paneli" data-reveal>
+          <div class="finder__q">«Сотрудники ведут учёт в тетради и в Excel, данные теряются»</div>
+          <span class="finder__a">Веб-панель <span class="arr">→</span></span>
+        </a>
+        <a class="finder__row" href="#gotovye" data-reveal>
+          <div class="finder__q">«Не знаю, у кого сейчас инструмент и когда его вернут»</div>
+          <span class="finder__a">Готовая система учёта <span class="arr">→</span></span>
+        </a>
+        <a class="finder__row" href="#dokumenty" data-reveal>
+          <div class="finder__q">«Каждый акт и счёт набираем руками, путаемся в нумерации»</div>
+          <span class="finder__a">Генерация документов <span class="arr">→</span></span>
+        </a>
+        <a class="finder__row" href="#mobilnye" data-reveal>
+          <div class="finder__q">«Бригада на объекте, нужен отчёт с фото прямо оттуда»</div>
+          <span class="finder__a">Приложение на телефон <span class="arr">→</span></span>
+        </a>
+        <a class="finder__row" href="#sayty" data-reveal>
+          <div class="finder__q">«Нужен сайт, чтобы люди находили и оставляли заявки»</div>
+          <span class="finder__a">Сайт или лендинг <span class="arr">→</span></span>
+        </a>
+        <a class="finder__row" href="#desktop" data-reveal>
+          <div class="finder__q">«Нужна программа на компьютер, работающая без интернета»</div>
+          <span class="finder__a">Приложение для Windows <span class="arr">→</span></span>
+        </a>
+        <a class="finder__row" href="#podderzhka" data-reveal>
+          <div class="finder__q">«Программа уже есть, но её некому вести и дорабатывать»</div>
+          <span class="finder__a">Поддержка <span class="arr">→</span></span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ГОТОВЫЕ РЕШЕНИЯ -->
+  <section class="section" id="gotovye">
+    <div class="container">
+      <div class="eyebrow" data-reveal>Готовые решения</div>
+      <h2 class="h-section" data-reveal style="--d:60ms">Быстрее и дешевле, чем с нуля</h2>
+      <p class="lead" data-reveal style="--d:100ms;margin-top:14px;margin-bottom:36px">
+        Эти системы уже написаны и работают. Под вашу компанию меняются названия,
+        справочники и права доступа — а не переписывается код. Поэтому срок измеряется
+        днями, а не месяцами.
+      </p>
+
+      <div class="grid grid--3">
+
+        <article class="ready" data-reveal>
+          <span class="ready__tag">Готово к внедрению</span>
+          <h3 class="h-card">Учёт инструмента и оборудования</h3>
+          <p class="small muted" style="margin-top:12px;line-height:1.65">
+            Кто что взял, когда вернёт, что в ремонте. Передача между сотрудниками
+            подтверждается получателем — потерять инструмент «между людьми» становится нельзя.
+          </p>
+          <ul class="ticks">
+            <li>Бот, мини-приложение и панель для руководителя</li>
+            <li>Роли: рабочий, бригадир, администратор</li>
+            <li>История по каждой единице</li>
+            <li>Отчёты в Excel, PDF и Word</li>
+            <li>Уведомления в Telegram и по SMS</li>
+          </ul>
+          <div class="price">
+            <b>от 35 000 ₽</b>
+            внедрение 5–10 дней
+          </div>
+          <a href="../demo/" class="service__demo">Открыть живое демо <span class="arr">→</span></a>
+        </article>
+
+        <article class="ready" data-reveal style="--d:80ms">
+          <span class="ready__tag">Готово к внедрению</span>
+          <h3 class="h-card">Заявки и акты для выездных бригад</h3>
+          <p class="small muted" style="margin-top:12px;line-height:1.65">
+            План на день, отчёт с объекта голосом или текстом, фотофиксация, подпись.
+            После подписи документ становится неизменяемым.
+          </p>
+          <ul class="ticks">
+            <li>Телефон для бригады, компьютер для администратора</li>
+            <li>Статусы: новая → в работе → завершена → подписана</li>
+            <li>Табель по фактическому времени работ</li>
+            <li>Доступ сотруднику выдаётся ссылкой</li>
+            <li>Работает как приложение, без установки из магазина</li>
+          </ul>
+          <div class="price">
+            <b>от 45 000 ₽</b>
+            внедрение 10–15 дней
+          </div>
+        </article>
+
+        <article class="ready" data-reveal style="--d:160ms">
+          <span class="ready__tag">Готово к внедрению</span>
+          <h3 class="h-card">Приём заявок ботом</h3>
+          <p class="small muted" style="margin-top:12px;line-height:1.65">
+            Бот задаёт клиенту вопросы, собирает заявку и присылает вам одним сообщением.
+            Работает круглосуточно и не забывает уточнить бюджет и срок.
+          </p>
+          <ul class="ticks">
+            <li>Анкета с кнопками — клиенту почти не нужно печатать</li>
+            <li>Клиент видит заявку перед отправкой</li>
+            <li>Журнал заявок, ни одна не теряется</li>
+            <li>Подключается к таблицам и CRM</li>
+          </ul>
+          <div class="price">
+            <b>от 15 000 ₽</b>
+            запуск 3–5 дней
+          </div>
+          <a href="../bot-demo/" class="service__demo">Посмотреть, как выглядит <span class="arr">→</span></a>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- НАПРАВЛЕНИЯ -->
+  <section class="section" id="napravleniya">
+    <div class="container">
+      <div class="eyebrow" data-reveal>Разработка с нуля</div>
+      <h2 class="h-section" data-reveal style="--d:60ms">Направления</h2>
+      <p class="lead" data-reveal style="--d:100ms;margin-top:14px;margin-bottom:36px">
+        Если готовое решение не подходит, делаю под задачу. Цены — нижняя граница
+        для типовой задачи; точная сумма называется после разбора и не меняется по ходу работы.
+      </p>
+
+      <!-- 01 Боты -->
+      <article class="service" id="boty" data-reveal>
+        <div class="service__main">
+          <div class="service__num">01</div>
+          <h3 class="h-card">Telegram-боты и мини-приложения</h3>
+          <p>
+            Бот заменяет менеджера на типовых операциях: принимает заявки, показывает каталог,
+            записывает на услуги, ведёт учёт. Мини-приложение — это полноценный интерфейс
+            с кнопками и таблицами внутри Telegram, устанавливать ничего не нужно.
+          </p>
+          <ul class="ticks">
+            <li>Диалог-анкета: бот сам ведёт человека по шагам</li>
+            <li>Каталог с корзиной и оплатой</li>
+            <li>Запись на услуги со свободными окнами и напоминаниями</li>
+            <li>Админ-панель: кто написал, что заказал, выгрузка в Excel</li>
+            <li>Рассылки по своей базе</li>
+          </ul>
+        </div>
+        <div class="service__side">
+          <h4>Сроки</h4>
+          <ul class="ticks ticks--plain">
+            <li>Простой бот — 3–5 дней</li>
+            <li>Бот с базой и админкой — 7–14 дней</li>
+            <li>С мини-приложением — от 14 дней</li>
+          </ul>
+          <div class="service__price">
+            <b>от 15 000 ₽</b>
+            мини-приложение — от 35 000 ₽
+          </div>
+          <a href="../bot-demo/" class="service__demo">Демо бота <span class="arr">→</span></a>
+        </div>
+      </article>
+
+      <!-- 02 Панели -->
+      <article class="service" id="paneli" data-reveal>
+        <div class="service__main">
+          <div class="service__num">02</div>
+          <h3 class="h-card">Веб-панели и личные кабинеты</h3>
+          <p>
+            Сайт для сотрудников: таблицы, карточки, поиск, фильтры, права доступа.
+            Заменяет общий Excel-файл, который все правят одновременно и в котором
+            невозможно понять, кто что изменил.
+          </p>
+          <ul class="ticks">
+            <li>Роли и права: каждый видит только своё</li>
+            <li>История изменений — видно, кто и когда правил</li>
+            <li>Поиск и фильтры по любым полям</li>
+            <li>Выгрузка в Excel, резервные копии базы</li>
+            <li>Работает на компьютере и на телефоне</li>
+          </ul>
+        </div>
+        <div class="service__side">
+          <h4>Сроки</h4>
+          <ul class="ticks ticks--plain">
+            <li>Панель на 3–5 разделов — 10–15 дней</li>
+            <li>С интеграциями — от 20 дней</li>
+          </ul>
+          <div class="service__price">
+            <b>от 40 000 ₽</b>
+            зависит от числа разделов
+          </div>
+          <a href="../demo/" class="service__demo">Пощёлкать демо панели <span class="arr">→</span></a>
+        </div>
+      </article>
+
+      <!-- 03 Документы -->
+      <article class="service" id="dokumenty" data-reveal>
+        <div class="service__main">
+          <div class="service__num">03</div>
+          <h3 class="h-card">Генерация документов и отчётов</h3>
+          <p>
+            Письма, акты, счета и накладные собираются программой: фирменная шапка, реквизиты,
+            сквозная нумерация, подпись и печать. Один и тот же документ выдаётся в PDF
+            для отправки и в Word для правок.
+          </p>
+          <ul class="ticks">
+            <li>PDF с печатью и факсимиле подписи</li>
+            <li>Word — редактируемый, без подписи</li>
+            <li>Excel-отчёты и выгрузки</li>
+            <li>Нумерация по своему шаблону, например АВ-14/2026</li>
+            <li>Справочник контрагентов с реквизитами</li>
+          </ul>
+        </div>
+        <div class="service__side">
+          <h4>Как подключается</h4>
+          <ul class="ticks ticks--plain">
+            <li>Отдельным модулем к вашей системе</li>
+            <li>Или как часть новой разработки</li>
+          </ul>
+          <div class="service__price">
+            <b>от 20 000 ₽</b>
+            за модуль, 7–14 дней
+          </div>
+        </div>
+      </article>
+
+      <!-- 04 Мобильные -->
+      <article class="service" id="mobilnye" data-reveal>
+        <div class="service__main">
+          <div class="service__num">04</div>
+          <h3 class="h-card">Приложения на телефон</h3>
+          <p>
+            Для большинства задач не нужно приложение из магазина: делаю веб-приложение,
+            которое ставится на телефон ярлыком, открывается без браузерной строки,
+            работает с камерой и микрофоном. Это дешевле и обновляется мгновенно.
+          </p>
+          <ul class="ticks">
+            <li>Устанавливается по ссылке, без App Store и Google Play</li>
+            <li>Камера, микрофон, геопозиция</li>
+            <li>Push-уведомления</li>
+            <li>Один интерфейс на Android и iPhone</li>
+            <li>Полноценное iOS-приложение на Swift — если задача требует</li>
+          </ul>
+        </div>
+        <div class="service__side">
+          <h4>Сроки</h4>
+          <ul class="ticks ticks--plain">
+            <li>Веб-приложение — 14–20 дней</li>
+            <li>iOS на Swift — от 30 дней</li>
+          </ul>
+          <div class="service__price">
+            <b>от 45 000 ₽</b>
+            iOS — от 90 000 ₽
+          </div>
+        </div>
+      </article>
+
+      <!-- 05 Сайты -->
+      <article class="service" id="sayty" data-reveal>
+        <div class="service__main">
+          <div class="service__num">05</div>
+          <h3 class="h-card">Сайты и лендинги</h3>
+          <p>
+            Одностраничник или сайт на несколько разделов. Заявка с формы приходит
+            вам в Telegram сразу, без проверки почты. Открывается за доли секунды,
+            потому что собирается вручную, а не на тяжёлом конструкторе.
+          </p>
+          <ul class="ticks">
+            <li>Дизайн под ваш бренд, не шаблон</li>
+            <li>Адаптация под телефоны и планшеты</li>
+            <li>Форма заявки с уведомлением в Telegram</li>
+            <li>Разметка для поисковиков и аналитика</li>
+            <li>Домен, хостинг и SSL — настраиваю сам</li>
+          </ul>
+        </div>
+        <div class="service__side">
+          <h4>Сроки</h4>
+          <ul class="ticks ticks--plain">
+            <li>Лендинг — 3–7 дней</li>
+            <li>Многостраничный — 10–14 дней</li>
+          </ul>
+          <div class="service__price">
+            <b>от 8 000 ₽</b>
+            многостраничный — от 25 000 ₽
+          </div>
+          <a href="../landing/" class="service__demo">Пример лендинга <span class="arr">→</span></a>
+        </div>
+      </article>
+
+      <!-- 06 Десктоп -->
+      <article class="service" id="desktop" data-reveal>
+        <div class="service__main">
+          <div class="service__num">06</div>
+          <h3 class="h-card">Программы для Windows</h3>
+          <p>
+            Настольное приложение одним файлом .exe: запускается двойным кликом,
+            установка не требуется, интернет не нужен. Подходит, когда данные
+            не должны покидать компьютер.
+          </p>
+          <ul class="ticks">
+            <li>Один файл, работает с флешки</li>
+            <li>Автозапуск с Windows и значок в трее</li>
+            <li>Горячие клавиши и работа в фоне</li>
+            <li>Своя база данных на диске</li>
+            <li>Тёмная и светлая тема</li>
+          </ul>
+        </div>
+        <div class="service__side">
+          <h4>Сроки</h4>
+          <ul class="ticks ticks--plain">
+            <li>Утилита — 7–14 дней</li>
+            <li>Программа с разделами — от 20 дней</li>
+          </ul>
+          <div class="service__price">
+            <b>от 35 000 ₽</b>
+            зависит от объёма
+          </div>
+        </div>
+      </article>
+
+      <!-- 07 Поддержка -->
+      <article class="service" id="podderzhka" data-reveal>
+        <div class="service__main">
+          <div class="service__num">07</div>
+          <h3 class="h-card">Поддержка и доработка</h3>
+          <p>
+            Веду проект после запуска — свой или чужой. Разбираюсь в чужом коде
+            и продолжаю с того места, где остановился предыдущий разработчик.
+          </p>
+          <ul class="ticks">
+            <li>Правки и новые разделы по мере надобности</li>
+            <li>Слежу за ошибками и доступностью сервера</li>
+            <li>Резервные копии базы</li>
+            <li>Обновление зависимостей и безопасность</li>
+            <li>Отчёт по потраченным часам</li>
+          </ul>
+        </div>
+        <div class="service__side">
+          <h4>Формат</h4>
+          <ul class="ticks ticks--plain">
+            <li>Абонемент с запасом часов</li>
+            <li>Или разовые задачи по факту</li>
+          </ul>
+          <div class="service__price">
+            <b>от 5 000 ₽</b>
+            в месяц
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ЧТО ВХОДИТ ВСЕГДА -->
+  <section class="section">
+    <div class="container">
+      <div class="eyebrow" data-reveal>Без доплат</div>
+      <h2 class="h-section" data-reveal style="--d:60ms">Что входит в любую работу</h2>
+      <p class="lead" data-reveal style="--d:100ms;margin-top:14px;margin-bottom:36px">
+        Это не опции, за которые выставят отдельный счёт в конце.
+      </p>
+
+      <div class="always">
+        <div class="always__item" data-reveal>
+          <h4>Исходный код передаётся вам</h4>
+          <p>Вы не привязаны ко мне. В любой момент можете отдать проект другому разработчику вместе со всеми доступами.</p>
+        </div>
+        <div class="always__item" data-reveal style="--d:60ms">
+          <h4>Фиксированная смета</h4>
+          <p>Цена называется до начала работы и не растёт по ходу. Если объём меняется — обсуждаем отдельно и заранее.</p>
+        </div>
+        <div class="always__item" data-reveal style="--d:120ms">
+          <h4>Месяц поддержки после сдачи</h4>
+          <p>Правки, вопросы и мелкие доработки в течение 30 дней — без оплаты.</p>
+        </div>
+        <div class="always__item" data-reveal style="--d:180ms">
+          <h4>Настройка сервера и домена</h4>
+          <p>Разворачиваю на хостинге, подключаю домен и сертификат безопасности. Вам не нужно ничего настраивать.</p>
+        </div>
+        <div class="always__item" data-reveal style="--d:240ms">
+          <h4>Инструкция для сотрудников</h4>
+          <p>Короткое описание, как пользоваться, — чтобы не объяснять каждому новому человеку лично.</p>
+        </div>
+        <div class="always__item" data-reveal style="--d:300ms">
+          <h4>Прямое общение</h4>
+          <p>Вы говорите с тем, кто пишет код. Без менеджеров, пересказов и испорченного телефона.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- КАК РАБОТАЕМ -->
+  <section class="section">
+    <div class="container">
+      <div class="eyebrow" data-reveal>Процесс</div>
+      <h2 class="h-section" data-reveal style="--d:60ms">Как проходит работа</h2>
+      <p class="lead" data-reveal style="--d:100ms;margin-top:14px;margin-bottom:36px">
+        На каждом этапе вы видите результат и подтверждаете его до перехода к следующему.
+      </p>
+
+      <div class="steps">
+        <div class="step" data-reveal>
+          <div class="step__num">01</div>
+          <h3>Разбор задачи</h3>
+          <p>Обсуждаем, что нужно и зачем. В ответ — смета, срок и описание того, что получится. Бесплатно и ни к чему не обязывает.</p>
+        </div>
+        <div class="step" data-reveal style="--d:100ms">
+          <div class="step__num">02</div>
+          <h3>Прототип</h3>
+          <p>Показываю, как будет выглядеть и работать, до написания основного кода. Правки на этом этапе быстрые и бесплатные.</p>
+        </div>
+        <div class="step" data-reveal style="--d:200ms">
+          <div class="step__num">03</div>
+          <h3>Разработка</h3>
+          <p>Пишу код и показываю рабочую версию на тестовом адресе. Вы пробуете по ходу, а не в конце.</p>
+        </div>
+        <div class="step" data-reveal style="--d:300ms">
+          <div class="step__num">04</div>
+          <h3>Запуск</h3>
+          <p>Переношу на ваш домен, передаю доступы и исходники. Дальше месяц поддержки без доплаты.</p>
+        </div>
+      </div>
+
+      <div class="always" style="margin-top:36px">
+        <div class="always__item" data-reveal>
+          <h4>Оплата</h4>
+          <p>50% предоплата после согласования сметы, остальное — после сдачи. На больших проектах делим на этапы.</p>
+        </div>
+        <div class="always__item" data-reveal style="--d:60ms">
+          <h4>Если задача не подходит</h4>
+          <p>Скажу об этом сразу и по возможности подскажу, к кому обратиться. Браться за то, что сделаю плохо, не буду.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section" id="zayavka">
+    <div class="container">
+      <div class="cta" data-reveal>
+        <div class="eyebrow eyebrow--center">Заявка</div>
+        <h2 class="h-section">Опишите задачу — посчитаю</h2>
+        <p class="lead">
+          Не нужно готовить техническое задание. Достаточно рассказать своими словами,
+          что не устраивает сейчас и как хотелось бы. Остальное — моя работа.
+        </p>
+        <div class="cta__actions">
+          <a href="https://t.me/username" class="btn btn--primary" target="_blank" rel="noopener">
+            Написать в Telegram <span class="arr">→</span>
+          </a>
+          <a href="../cases/" class="btn btn--ghost">Сначала посмотреть кейсы</a>
+        </div>
+        <div class="cta__note">Отвечаю в течение 2 часов в рабочее время</div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div class="footer__col--brand">
+        <a href="../" class="logo"><span class="logo__mark"></span>Портфолио</a>
+        <p>Системы учёта, боты и сайты для строительных, монтажных и сервисных компаний.</p>
+      </div>
+      <div>
+        <h4>Разделы</h4>
+        <ul>
+          <li><a href="../">Главная</a></li>
+          <li><a href="./">Возможности</a></li>
+          <li><a href="../cases/">Кейсы</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Посмотреть</h4>
+        <ul>
+          <li><a href="../demo/">Система учёта</a></li>
+          <li><a href="../landing/">Лендинг</a></li>
+          <li><a href="../vizitka/">Визитка</a></li>
+          <li><a href="../bot-demo/">Демо бота</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <span>© 2026 — разработка под заказ</span>
+      <a href="https://t.me/username" target="_blank" rel="noopener">Telegram</a>
+    </div>
+  </div>
+</footer>
+
+<script src="../assets/site.js"></script>
+</body>
+</html>
