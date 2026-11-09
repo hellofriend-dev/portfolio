@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1536" height="480" viewBox="0 0 1536 480" fill="none">
+  <rect width="1536" height="480" fill="#FBFAF8"/>
+
+  <!-- The left half stays quiet for the page title and lead. -->
+  <g aria-hidden="true">
+    <path d="M930 0H1536V480H812L930 0Z" fill="#E9E2D6" fill-opacity="0.38"/>
+    <path d="M1110 0H1536V480H992L1110 0Z" fill="#2C5A62" fill-opacity="0.08"/>
+
+    <!-- Ordered, transparent layers: every record has a visible place. -->
+    <rect x="1000" y="70" width="366" height="286" fill="#FBFAF8" stroke="#2C5A62" stroke-width="2"/>
+    <rect x="1038" y="102" width="366" height="286" fill="#FBFAF8" stroke="#2C5A62" stroke-width="2"/>
+    <rect x="1078" y="134" width="366" height="286" fill="#FBFAF8" stroke="#2C5A62" stroke-width="2"/>
+
+    <rect x="1118" y="178" width="188" height="10" fill="#2C5A62"/>
+    <rect x="1118" y="218" width="278" height="4" fill="#2C5A62" fill-opacity="0.42"/>
+    <rect x="1118" y="248" width="236" height="4" fill="#2C5A62" fill-opacity="0.42"/>
+    <rect x="1118" y="278" width="260" height="4" fill="#2C5A62" fill-opacity="0.42"/>
+
+    <rect x="1118" y="324" width="74" height="54" fill="#E9E2D6"/>
+    <path d="M1138 350L1152 364L1178 338" stroke="#2C5A62" stroke-width="5"/>
+    <path d="M1218 344H1392M1218 370H1354" stroke="#2C5A62" stroke-width="4" stroke-opacity="0.42"/>
+
+    <rect x="1078" y="134" width="16" height="286" fill="#B4762A"/>
+    <rect x="1412" y="388" width="32" height="32" fill="#B4762A"/>
+    <path d="M872 426H1492" stroke="#2C5A62" stroke-width="2"/>
+    <path d="M934 450H1426" stroke="#B4762A" stroke-width="2"/>
+  </g>
+</svg>

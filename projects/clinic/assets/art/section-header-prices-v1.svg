@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1536" height="480" viewBox="0 0 1536 480" fill="none">
+  <rect width="1536" height="480" fill="#FBFAF8"/>
+
+  <!-- The left half stays quiet for the page title and lead. -->
+  <g aria-hidden="true">
+    <path d="M930 0H1536V480H812L930 0Z" fill="#E9E2D6" fill-opacity="0.38"/>
+    <path d="M1110 0H1536V480H992L1110 0Z" fill="#2C5A62" fill-opacity="0.08"/>
+
+    <!-- A measured register: alignment, repeatability and visible totals. -->
+    <rect x="1000" y="68" width="446" height="330" fill="#FBFAF8" stroke="#2C5A62" stroke-width="2"/>
+    <path d="M1000 140H1446M1000 206H1446M1000 272H1446M1000 338H1446" stroke="#2C5A62" stroke-width="2" stroke-opacity="0.38"/>
+    <path d="M1302 68V398" stroke="#2C5A62" stroke-width="2" stroke-opacity="0.38"/>
+
+    <rect x="1036" y="98" width="152" height="10" fill="#2C5A62"/>
+    <rect x="1036" y="164" width="204" height="4" fill="#2C5A62" fill-opacity="0.45"/>
+    <rect x="1036" y="230" width="170" height="4" fill="#2C5A62" fill-opacity="0.45"/>
+    <rect x="1036" y="296" width="224" height="4" fill="#2C5A62" fill-opacity="0.45"/>
+    <rect x="1036" y="362" width="188" height="4" fill="#2C5A62" fill-opacity="0.45"/>
+
+    <rect x="1340" y="96" width="70" height="12" fill="#B4762A"/>
+    <rect x="1362" y="162" width="48" height="6" fill="#2C5A62"/>
+    <rect x="1332" y="228" width="78" height="6" fill="#2C5A62"/>
+    <rect x="1350" y="294" width="60" height="6" fill="#2C5A62"/>
+    <rect x="1324" y="360" width="86" height="6" fill="#2C5A62"/>
+
+    <path d="M866 424H1492" stroke="#2C5A62" stroke-width="2"/>
+    <path d="M936 448H1424" stroke="#B4762A" stroke-width="2"/>
+    <rect x="1430" y="68" width="16" height="330" fill="#B4762A"/>
+  </g>
+</svg>

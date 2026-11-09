@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1536" height="480" viewBox="0 0 1536 480" fill="none">
+  <rect width="1536" height="480" fill="#FBFAF8"/>
+
+  <!-- The left side stays intentionally quiet for the page title and lead. -->
+  <g aria-hidden="true">
+    <path d="M934 0H1536V480H816L934 0Z" fill="#E9E2D6" fill-opacity="0.38"/>
+    <path d="M1114 0H1536V480H996L1114 0Z" fill="#2C5A62" fill-opacity="0.08"/>
+
+    <!-- Open layers: an abstract rhythm of information being made visible. -->
+    <rect x="1002" y="72" width="430" height="280" fill="#FBFAF8" stroke="#2C5A62" stroke-width="2"/>
+    <rect x="1040" y="104" width="430" height="280" fill="#FBFAF8" stroke="#2C5A62" stroke-width="2"/>
+    <rect x="1080" y="136" width="430" height="280" fill="#FBFAF8" stroke="#2C5A62" stroke-width="2"/>
+
+    <rect x="1120" y="184" width="238" height="12" fill="#2C5A62"/>
+    <rect x="1120" y="220" width="318" height="4" fill="#2C5A62" fill-opacity="0.42"/>
+    <rect x="1120" y="248" width="276" height="4" fill="#2C5A62" fill-opacity="0.42"/>
+    <rect x="1120" y="276" width="304" height="4" fill="#2C5A62" fill-opacity="0.42"/>
+    <rect x="1120" y="304" width="210" height="4" fill="#2C5A62" fill-opacity="0.42"/>
+
+    <rect x="1080" y="136" width="16" height="280" fill="#B4762A"/>
+    <rect x="1422" y="368" width="32" height="32" fill="#B4762A"/>
+
+    <path d="M868 416H1510" stroke="#2C5A62" stroke-width="2"/>
+    <path d="M918 440H1444" stroke="#B4762A" stroke-width="2"/>
+  </g>
+</svg>
