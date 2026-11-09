@@ -85,6 +85,8 @@
   border-bottom:1px solid var(--border);
   padding:18px;display:flex;flex-direction:column;gap:9px;overflow:hidden;
 }
+.sample__shot{padding:0}
+.sample__shot img{display:block;width:100%;height:100%;object-fit:cover;object-position:top}
 .mock__bar{height:8px;border-radius:3px;background:rgba(255,255,255,.09)}
 .mock__bar--accent{background:rgba(108,99,255,.55)}
 .mock__row{display:flex;gap:9px}
@@ -131,6 +133,7 @@
       <a href="demo/">Учёт инструмента</a>
       <a href="akty/">Заявки и акты</a>
       <a href="docs/">Документы</a>
+      <a href="projects/">Проекты</a>
     </nav>
     <a href="#zayavka" class="btn btn--primary btn--sm">Обсудить задачу</a>
   </div>
@@ -163,7 +166,7 @@
       </div>
 
       <div class="stats" data-reveal style="--d:260ms;margin-top:56px">
-        <div class="stats__item"><b>6</b><span>готовых систем</span></div>
+        <div class="stats__item"><b>7</b><span>готовых систем</span></div>
         <div class="stats__item"><b>от 3 дней</b><span>до запуска</span></div>
         <div class="stats__item"><b>2 часа</b><span>среднее время ответа</span></div>
         <div class="stats__item"><b>14 дней</b><span>поддержки в подарок</span></div>
@@ -187,7 +190,7 @@
           </p>
           <p>
             В демо доступно всё: примите передачу, добавьте инструмент, поменяйте статус,
-            посмотрите историю. Логин и пароль уже подставлены — просто нажмите «Войти».
+            посмотрите историю. Вход: demo@stroymontazh.ru, пароль demo.
           </p>
           <span class="btn btn--primary" style="margin-top:26px">Открыть демо <span class="arr">→</span></span>
         </div>
@@ -221,6 +224,23 @@
           <div class="stats__item"><b>0</b><span>установок</span></div>
         </div>
       </a>
+
+      <a class="flagship" href="projects/clinic/" data-reveal style="margin-top:20px">
+        <div>
+          <div class="flagship__tag"><span class="dot"></span>Реальный сайт · обезличенная копия</div>
+          <h3>Сайт стоматологической клиники</h3>
+          <p>
+            Услуги, прейскурант на 267 позиций, врачи, раздел для пациентов, документы
+            и запись. Сайт работает у реальной клиники, а в демо название, адрес, телефоны,
+            врачи и цены заменены вымышленными.
+          </p>
+          <span class="btn btn--primary" style="margin-top:26px">Открыть демо <span class="arr">→</span></span>
+        </div>
+        <div style="border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden">
+          <img src="assets/shots/clinic.webp" width="1200" height="750" loading="lazy" alt="Главная страница сайта клиники" style="display:block;width:100%;height:auto">
+        </div>
+      </a>
+
     </div>
   </section>
 
@@ -350,23 +370,13 @@
       <div class="eyebrow" data-reveal>Примеры работ</div>
       <h2 class="h-section" data-reveal style="--d:60ms">Посмотреть, как это выглядит</h2>
       <p class="lead" data-reveal style="--d:100ms;margin-top:14px;margin-bottom:36px">
-        Три демонстрационные страницы — открываются сразу, ничего устанавливать не нужно.
+        Три демонстрационные страницы — открываются сразу, ничего устанавливать не нужно. Реальные проекты с вымышленными данными собраны на странице <a href="projects/" style="color:var(--accent)">«Проекты»</a>.
       </p>
 
       <div class="samples">
 
         <a class="sample" href="landing/" data-reveal>
-          <div class="sample__shot" aria-hidden="true">
-            <div class="mock__bar" style="width:38%"></div>
-            <div class="mock__bar mock__bar--accent" style="width:22%"></div>
-            <div class="mock__row" style="margin-top:6px">
-              <div class="mock__tile" style="min-height:62px"></div>
-              <div class="mock__tile" style="min-height:62px"></div>
-            </div>
-            <div class="mock__row">
-              <div class="mock__tile"></div><div class="mock__tile"></div><div class="mock__tile"></div>
-            </div>
-          </div>
+          <div class="sample__shot"><img src="assets/shots/landing.webp" width="1200" height="750" loading="lazy" alt="Лендинг для бизнеса, первый экран"></div>
           <div class="sample__body">
             <h3>Лендинг для бизнеса</h3>
             <p>Одностраничник под ключ: услуги с ценами, процесс работы, портфолио и блок заявки.</p>
@@ -375,15 +385,7 @@
         </a>
 
         <a class="sample" href="bot-demo/" data-reveal style="--d:80ms">
-          <div class="sample__shot" aria-hidden="true">
-            <div class="mock__chat">Здравствуйте! Что вас интересует?</div>
-            <div class="mock__chat mock__chat--out">Выдать инструмент</div>
-            <div class="mock__chat">Кому выдаём?</div>
-            <div class="mock__row" style="margin-top:auto">
-              <div class="mock__tile" style="min-height:26px"></div>
-              <div class="mock__tile" style="min-height:26px"></div>
-            </div>
-          </div>
+          <div class="sample__shot"><img src="assets/shots/bot-demo.webp" width="1200" height="750" loading="lazy" alt="Демонстрация Telegram-бота учёта инструмента"></div>
           <div class="sample__body">
             <h3>Демонстрация бота</h3>
             <p>Живой мок-чат: сообщения печатаются по очереди, видно кнопки и сценарий целиком.</p>
@@ -392,16 +394,7 @@
         </a>
 
         <a class="sample" href="vizitka/" data-reveal style="--d:160ms">
-          <div class="sample__shot" aria-hidden="true">
-            <div class="mock__bar" style="width:50%"></div>
-            <div class="mock__bar" style="width:30%"></div>
-            <div class="mock__row" style="margin-top:8px">
-              <div class="mock__tile" style="min-height:22px"></div>
-              <div class="mock__tile" style="min-height:22px"></div>
-              <div class="mock__tile" style="min-height:22px"></div>
-            </div>
-            <div class="mock__bar mock__bar--accent" style="width:40%;margin-top:auto"></div>
-          </div>
+          <div class="sample__shot"><img src="assets/shots/vizitka.webp" width="1200" height="750" loading="lazy" alt="Сайт-визитка разработчика"></div>
           <div class="sample__body">
             <h3>Сайт-визитка</h3>
             <p>Персональная страница: навыки по группам, проекты списком, контакты.</p>
@@ -418,10 +411,10 @@
     <div class="container">
       <div class="cta" data-reveal>
         <div class="eyebrow eyebrow--center">Кейсы</div>
-        <h2 class="h-section">Шесть систем, которые уже работают</h2>
+        <h2 class="h-section">Семь систем, которые уже работают</h2>
         <p class="lead">
           Учёт инструмента, подготовка документов, акты для выездных бригад, заявки
-          на закуп, сервис переписки и выгрузка истории Telegram. По каждому —
+          на закуп, сервис переписки, выгрузка истории Telegram и сайт клиники. По каждому —
           задача, решение и состав работ.
         </p>
         <div class="cta__actions">
@@ -466,6 +459,7 @@
         <ul>
           <li><a href="uslugi/">Возможности и цены</a></li>
           <li><a href="cases/">Кейсы</a></li>
+          <li><a href="projects/">Проекты</a></li>
           <li><a href="#zayavka">Оставить заявку</a></li>
         </ul>
       </div>
