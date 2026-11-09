@@ -4,21 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Кейсы — какие системы я делал</title>
-<meta name="description" content="Семь работающих систем: учёт инструмента, подготовка документов, акты для выездных бригад, заявки на закуп, сервис переписки, выгрузка истории Telegram, сайт клиники.">
+<meta name="description" content="Шесть работающих систем: учёт инструмента, подготовка документов, акты для выездных бригад, заявки на закуп, сервис переписки, выгрузка истории Telegram.">
 <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
 <link rel="canonical" href="https://hellofriend-dev.github.io/portfolio/cases/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Портфолио разработчика">
 <meta property="og:locale" content="ru_RU">
 <meta property="og:title" content="Кейсы — какие системы я делал">
-<meta property="og:description" content="Семь работающих систем: учёт инструмента, подготовка документов, акты для выездных бригад, сайт клиники и другие.">
+<meta property="og:description" content="Шесть работающих систем: учёт инструмента, подготовка документов, акты для выездных бригад, заявки на закуп и другие.">
 <meta property="og:url" content="https://hellofriend-dev.github.io/portfolio/cases/">
 <meta property="og:image" content="https://hellofriend-dev.github.io/portfolio/assets/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Кейсы — какие системы я делал">
-<meta name="twitter:description" content="Семь работающих систем: учёт инструмента, подготовка документов, акты для выездных бригад, сайт клиники и другие.">
+<meta name="twitter:description" content="Шесть работающих систем: учёт инструмента, подготовка документов, акты для выездных бригад, заявки на закуп и другие.">
 <meta name="twitter:image" content="https://hellofriend-dev.github.io/portfolio/assets/og.png">
 <meta name="theme-color" content="#0A0A0A">
 
@@ -59,13 +59,6 @@
 .case__live .arr{transition:transform .25s var(--ease)}
 .case__live:hover .arr{transform:translateX(3px)}
 
-.case__shot{display:block;border-bottom:1px solid var(--border);background:var(--surface-2);overflow:hidden}
-.case__shot img{display:block;width:100%;height:auto;aspect-ratio:1200/750;object-fit:cover;object-position:top;transition:transform .4s var(--ease)}
-.case__shot:hover img{transform:scale(1.015)}
-.case__shot--two{display:grid;grid-template-columns:minmax(0,1fr) 200px;gap:0;background:var(--surface-2)}
-.case__shot--two img:first-child{aspect-ratio:auto}
-.case__shot--two img:last-child{border-left:1px solid var(--border);aspect-ratio:auto;object-position:top}
-@media (max-width:680px){.case__shot--two{grid-template-columns:minmax(0,1fr) 38%}}
 .case__body{
   display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
   background:var(--border);
@@ -111,7 +104,6 @@
       <a href="../demo/">Учёт инструмента</a>
       <a href="../akty/">Заявки и акты</a>
       <a href="../docs/">Документы</a>
-      <a href="../projects/">Проекты</a>
     </nav>
     <a href="#zayavka" class="btn btn--primary btn--sm">Обсудить задачу</a>
   </div>
@@ -129,12 +121,12 @@
       <div class="badge" data-reveal><span class="dot"></span>Системы в работе</div>
       <h1 class="h-display" data-reveal style="--d:60ms">Кейсы</h1>
       <p class="lead" data-reveal style="--d:130ms;margin-top:22px">
-        Семь систем, которые я спроектировал и написал. Названия компаний не указываю —
+        Шесть систем, которые я спроектировал и написал. Названия компаний не указываю —
         это условие работы с заказчиками. Всё остальное описано как есть.
       </p>
 
       <div class="stats" data-reveal style="--d:200ms;margin-top:48px">
-        <div class="stats__item"><b>7</b><span>систем</span></div>
+        <div class="stats__item"><b>6</b><span>систем</span></div>
         <div class="stats__item"><b>4</b><span>вида интерфейсов</span></div>
         <div class="stats__item"><b>2 700+</b><span>рабочих коммитов</span></div>
         <div class="stats__item"><b>3 года</b><span>практики</span></div>
@@ -159,7 +151,6 @@
           </div>
           <a href="../demo/" class="case__live">Открыть демо <span class="arr">→</span></a>
         </div>
-        <a class="case__shot" href="../demo/"><img src="../assets/shots/demo.webp" width="1200" height="750" loading="lazy" alt="Экран «Обзор» в панели учёта инструмента: счётчики и входящие передачи"></a>
         <div class="case__body">
           <div class="case__col">
             <h4>Задача</h4>
@@ -209,7 +200,6 @@
           </div>
           <a href="../docs/" class="case__live">Открыть демо <span class="arr">→</span></a>
         </div>
-        <a class="case__shot" href="../docs/"><img src="../assets/shots/docs.webp" width="1200" height="750" loading="lazy" alt="Подготовка документов: форма слева и готовое письмо с шапкой справа"></a>
         <div class="case__body">
           <div class="case__col">
             <h4>Задача</h4>
@@ -259,7 +249,6 @@
           </div>
           <a href="../akty/" class="case__live">Открыть демо <span class="arr">→</span></a>
         </div>
-        <a class="case__shot" href="../akty/"><img src="../assets/shots/akty.webp" width="1200" height="750" loading="lazy" alt="Заявки и акты: телефон исполнителя с планом на день"></a>
         <div class="case__body">
           <div class="case__col">
             <h4>Задача</h4>
@@ -437,54 +426,6 @@
         </div>
       </article>
 
-      <!-- 07 -->
-      <article class="case" data-reveal>
-        <div class="case__head">
-          <div>
-            <div class="case__num">07</div>
-            <h2 class="h-card">Сайт стоматологической клиники</h2>
-            <div class="case__who">
-              <span>Частная клиника</span>
-              <span>Сайт и панель управления</span>
-            </div>
-          </div>
-          <a href="../projects/clinic/" class="case__live">Открыть демо <span class="arr">→</span></a>
-        </div>
-        <a class="case__shot case__shot--two" href="../projects/clinic/"><img src="../assets/shots/clinic.webp" width="1200" height="750" loading="lazy" alt="Главная страница сайта клиники на компьютере"><img src="../assets/shots/clinic-mobile.webp" width="500" height="1082" loading="lazy" alt="Та же страница на телефоне"></a>
-        <div class="case__body">
-          <div class="case__col">
-            <h4>Задача</h4>
-            <p>
-              Сайт клиники должен соответствовать требованиям к медицинским сайтам, понятно
-              объяснять услуги и цены и принимать записи так, чтобы администратор их не терял.
-            </p>
-          </div>
-          <div class="case__col">
-            <h4>Что сделал</h4>
-            <p>
-              Сайт с каталогом услуг, прейскурантом на 267 позиций, карточками врачей,
-              разделами для пациентов и документами. Заявки с форм попадают в панель,
-              где сотрудник меняет статус. Прайс загружается из Excel.
-            </p>
-          </div>
-          <div class="case__col">
-            <h4>Что внутри</h4>
-            <p>
-              Панель с ролями, правка врачей, услуг, документов и новостей без разработчика,
-              версия для слабовидящих, резервные копии. Работает на российском хостинге.
-              В демо название, адрес, телефоны, врачи и цены заменены вымышленными.
-            </p>
-          </div>
-        </div>
-        <div class="case__foot">
-          <div class="chips">
-            <span class="chip">Next.js</span><span class="chip">React</span><span class="chip">PostgreSQL</span>
-            <span class="chip">Prisma</span><span class="chip">Docker</span>
-          </div>
-          <div class="case__scale"><b>39</b> страниц в демо</div>
-        </div>
-      </article>
-
     </div>
   </section>
 
@@ -500,7 +441,7 @@
         </p>
         <p>
           Всё, что описано выше, можно проверить: система учёта инструмента открыта
-          для тестирования в разделе «Живое демо», сайт клиники открыт как обезличенная копия, по остальным готов показать экраны
+          для тестирования в разделе «Живое демо», по остальным готов показать экраны
           и рассказать детали на созвоне.
         </p>
       </div>
